@@ -11,4 +11,5 @@
  2014.12.25  v4 大重构 
  2015.3.2   去掉mmPromise
  2014.3.13  使用加强版mmPromise
+ 2014.3.17  增加 xhr 的 onprogress 回调
  */

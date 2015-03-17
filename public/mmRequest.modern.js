@@ -561,7 +561,15 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 for (var i in this.requestHeaders) {
                     transport.setRequestHeader(i, this.requestHeaders[i] + "")
                 }
-                var dataType = this.options.dataType
+
+                /*
+                 * progress
+                 */
+                if (opts.progressCallback) {
+                    transport.onprogress = opts.progressCallback
+                }
+
+                var dataType = opts.dataType
                 if ("responseType" in transport && /^(blob|arraybuffer|text)$/.test(dataType)) {
                     transport.responseType = dataType
                     this.useResponseType = true
@@ -701,4 +709,5 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
  2014.12.25  v4 大重构 
  2015.3.2   去掉mmPromise
  2014.3.13  使用加强版mmPromise
+ 2014.3.17  增加 xhr 的 onprogress 回调
  */

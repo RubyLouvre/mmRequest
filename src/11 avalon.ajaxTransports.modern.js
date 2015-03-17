@@ -33,7 +33,15 @@ var transports = avalon.ajaxTransports = {
             for (var i in this.requestHeaders) {
                 transport.setRequestHeader(i, this.requestHeaders[i] + "")
             }
-            var dataType = this.options.dataType;
+            
+            /*
+             * progress
+             */
+            if(opts.progressCallback) {
+                transport.onprogress = opts.progressCallback
+            }
+
+            var dataType = opts.dataType
             if ("responseType" in transport && /^(blob|arraybuffer|text)$/.test(dataType)) {
                 transport.responseType = dataType;
                 this.useResponseType = true;
