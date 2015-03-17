@@ -87,7 +87,6 @@ var XHRMethods = {
         this._transport = this.transport;
         // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
         if (isSuccess) {
-            avalon.log("成功加载数据")
             this._resolve(this.response, statusText, this)
         } else {
             this._reject(statusText, this.error || statusText)

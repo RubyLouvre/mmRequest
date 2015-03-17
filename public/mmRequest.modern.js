@@ -217,7 +217,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             this._transport = this.transport
             // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
             if (isSuccess) {
-                avalon.log("成功加载数据")
                 this._resolve(this.response, statusText, this)
             } else {
                 this._reject(statusText, this.error || statusText)
@@ -536,7 +535,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             request: function() {
                 var self = this
                 var opts = this.options
-                avalon.log("XhrTransport.request.....")
                 var transport = this.transport = new avalon.xhr
                 transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
                 if (this.mimeType && transport.overrideMimeType) {
@@ -644,7 +642,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             request: function() {
                 var opts = this.options
                 var node = this.transport = DOC.createElement("script")
-                avalon.log("ScriptTransport.sending.....")
                 if (opts.charset) {
                     node.charset = opts.charset
                 }

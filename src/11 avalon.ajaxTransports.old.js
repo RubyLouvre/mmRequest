@@ -4,7 +4,6 @@ var transports = avalon.ajaxTransports = {
         request: function() {
             var self = this;
             var opts = this.options;
-            avalon.log("XhrTransport.request.....")
             var transport = this.transport = new avalon.xhr;
             transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
             if (this.mimeType && transport.overrideMimeType) {
@@ -157,7 +156,6 @@ var transports = avalon.ajaxTransports = {
         request: function() {
             var opts = this.options;
             var node = this.transport = DOC.createElement("script")
-            avalon.log("ScriptTransport.sending.....")
             if (opts.charset) {
                 node.charset = opts.charset
             }
@@ -282,7 +280,6 @@ if (!window.FormData) {
                 form.action = opts.url;
                 form.method = "POST";
                 form.enctype = "multipart/form-data";
-                avalon.log("iframe transport...");
                 this.uploadcallback = avalon.bind(iframe, "load", function(event) {
                     self.respond(event);
                 });
@@ -318,7 +315,6 @@ if (!window.FormData) {
                 delete this.uploadcallback;
                 setTimeout(function() {  // Fix busy state in FF3
                     node.parentNode.removeChild(node);
-                    avalon.log("iframe.parentNode.removeChild(iframe)");
                 });
             }
         };
