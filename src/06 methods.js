@@ -38,9 +38,10 @@ avalon.ajax = function(opts, promise) {
         avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
         promise.async = false
     }
-    promise._complete = function(fn) {
+    promise._complete = function(args) {
+        var fn
         while (fn = completeFns.shift()) {
-            fn.apply(promise, arguments)
+            fn.apply(promise, args)
         }
     }
     promise.always = function(fn) {

@@ -292,7 +292,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             promise.async = false
         }
         promise._complete = function(args) {
-            var fn;
+            var fn
             while (fn = completeFns.shift()) {
                 fn.apply(promise, args)
             }

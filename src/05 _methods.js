@@ -89,9 +89,9 @@ var XHRMethods = {
         if (isSuccess) {
             this._resolve([this.response, statusText, this])
         } else {
-            this._reject([statusText, this.error || statusText])
+            this._reject([statusText, this.error || statusText, this])
         }
-        this._complete(this, statusText)
+        this._complete([this.response || statusText, this.error || statusText, this])
         delete this.transport
     }
 }
