@@ -195,14 +195,18 @@ The avalon XMLHttpRequest (msXHR) object returned by `avalon.ajax()` is a supers
 
 The msXHR objects returned by `avalon.ajax()` implement the Promise interface, giving them all the properties, methods, and behavior of a Promise. These methods take one or more function arguments that are called when the `avalon.ajax()` request terminates. This allows you to assign multiple callbacks on a single request, and even to assign callbacks after the request may have completed. (If the request is already complete, the callback is fired immediately.) Available Promise methods of the msXHR object include:
 
-- msXHR.done(function( data ) {});
+- **msXHR.done(function( data, statusText, msXHR ) {});**
 
     An alternative construct to the success callback option.
 
-- msXHR.fail(function( msXHR ) {});
+- **msXHR.fail(function( statusText, error|statusText, msXHR ) {});**
 
     An alternative construct to the error callback option.
 
-- msXHR.then(function( data ) {}, function( msXHR ) {});
+- **msXHR.always(function( data|statusText, error|statusText, msXHR ) {});**
+
+    In response to a successful request, the function's arguments are the same as those of .done(): data, statusText, and the msXHR object. For failed requests the arguments are the same as those of .fail(): the statusText, errorThrown, and msXHR object.
+
+- **msXHR.then(function( data, statusText, msXHR ) {}, function( statusText, error|statusText, msXHR ) {});**
 
     Incorporates the functionality of the .done() and .fail() methods, allowing the underlying Promise to be manipulated.
