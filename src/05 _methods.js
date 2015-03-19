@@ -87,9 +87,9 @@ var XHRMethods = {
         this._transport = this.transport;
         // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
         if (isSuccess) {
-            this._resolve(this.response, statusText, this)
+            this._resolve([this.response, statusText, this])
         } else {
-            this._reject(statusText, this.error || statusText)
+            this._reject([statusText, this.error || statusText])
         }
         this._complete(this, statusText)
         delete this.transport
