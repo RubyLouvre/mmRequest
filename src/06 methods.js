@@ -23,6 +23,16 @@ avalon.ajax = function(opts, promise) {
     promise.options = opts
     promise._reject = _reject
     promise._resolve = _resolve
+    promise.done = function(onSuccess){
+        return this.then(function(value){
+            onSuccess.apply(this, value)
+        })
+    }
+    promise.fail = function(onFail){
+        return this.then(null, function(reason){
+            onFail.apply(this, reason)
+        })
+    }
     var isSync = opts.async === false
     if (isSync) {
         avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")

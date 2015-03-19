@@ -138,6 +138,14 @@ A set of key/value pairs that configure the Ajax request. `url` is required whil
 
 > ---
 
+> **progressCallback**
+
+> Type: Function( Object event )
+
+> A function to be called when the callback `onprogress` of XMLHttpRequest is fired.
+
+> ---
+
 > **success**
 
 > Type: Function( Anything data, String textStatus, msXHR msXHR )

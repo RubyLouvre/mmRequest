@@ -243,10 +243,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             this._transport = this.transport
             // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
             if (isSuccess) {
-                avalon.log("成功加载数据")
-                this._resolve(this.response, statusText, this)
+                this._resolve([this.response, statusText, this])
             } else {
-                this._reject(statusText, this.error || statusText)
+                this._reject([statusText, this.error || statusText])
             }
             this._complete(this, statusText)
             delete this.transport
@@ -277,6 +276,16 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         promise.options = opts
         promise._reject = _reject
         promise._resolve = _resolve
+        promise.done = function(onSuccess) {
+            return this.then(function(value) {
+                onSuccess.apply(this, value)
+            })
+        }
+        promise.fail = function(onFail) {
+            return this.then(null, function(reason) {
+                onFail.apply(this, reason)
+            })
+        }
         var isSync = opts.async === false
         if (isSync) {
             avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
@@ -558,7 +567,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             request: function() {
                 var self = this
                 var opts = this.options
-                avalon.log("XhrTransport.request.....")
                 var transport = this.transport = new avalon.xhr
                 transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
                 if (this.mimeType && transport.overrideMimeType) {
@@ -586,7 +594,15 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 for (var i in this.requestHeaders) {
                     transport.setRequestHeader(i, this.requestHeaders[i] + "")
                 }
-                var dataType = this.options.dataType
+
+                /*
+                 * progress
+                 */
+                if (opts.progressCallback) {
+                    transport.onprogress = opts.progressCallback
+                }
+
+                var dataType = opts.dataType
                 if ("responseType" in transport && /^(blob|arraybuffer|text)$/.test(dataType)) {
                     transport.responseType = dataType
                     this.useResponseType = true
@@ -702,7 +718,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             request: function() {
                 var opts = this.options
                 var node = this.transport = DOC.createElement("script")
-                avalon.log("ScriptTransport.sending.....")
                 if (opts.charset) {
                     node.charset = opts.charset
                 }
@@ -827,7 +842,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                     form.action = opts.url
                     form.method = "POST"
                     form.enctype = "multipart/form-data"
-                    avalon.log("iframe transport...")
                     this.uploadcallback = avalon.bind(iframe, "load", function(event) {
                         self.respond(event)
                     })
@@ -863,7 +877,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                     delete this.uploadcallback
                     setTimeout(function() { // Fix busy state in FF3
                         node.parentNode.removeChild(node)
-                        avalon.log("iframe.parentNode.removeChild(iframe)")
                     })
                 }
             }
@@ -884,4 +897,5 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
  2014.12.25  v4 大重构 
  2015.3.2   去掉mmPromise
  2014.3.13  使用加强版mmPromise
+ 2014.3.17  增加 xhr 的 onprogress 回调
  */
