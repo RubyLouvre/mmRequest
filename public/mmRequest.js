@@ -245,9 +245,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             if (isSuccess) {
                 this._resolve([this.response, statusText, this])
             } else {
-                this._reject([statusText, this.error || statusText])
+                this._reject([statusText, this.error || statusText, this])
             }
-            this._complete(this, statusText)
+            this._complete([this.response || statusText, this.error || statusText, this])
             delete this.transport
         }
     }
@@ -291,9 +291,10 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
             promise.async = false
         }
-        promise._complete = function(fn) {
+        promise._complete = function(args) {
+            var fn;
             while (fn = completeFns.shift()) {
-                fn.apply(promise, arguments)
+                fn.apply(promise, args)
             }
         }
         promise.always = function(fn) {
