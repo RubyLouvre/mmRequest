@@ -244,7 +244,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             if (isSuccess) {
                 this._resolve([this.response, statusText, this])
             } else {
-                this._reject([statusText, this.error || statusText, this])
+                this._reject([this, statusText, this.error])
             }
             delete this.transport
         }
