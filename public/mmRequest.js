@@ -299,7 +299,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         })
 
         promise.always = function(fn) {
-            var completeFns = this._completes || (this._completes = [])
+            var completeFns = this._completes = []
             if (typeof fn === "function") {
                 completeFns.push(fn)
             }
