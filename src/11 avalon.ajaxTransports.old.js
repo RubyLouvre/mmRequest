@@ -35,8 +35,12 @@ var transports = avalon.ajaxTransports = {
             /*
              * progress
              */
-            if(opts.progressCallback) {
-                transport.onprogress = opts.progressCallback
+            if (opts.progressCallback) {
+                // 判断是否 ie6-9
+                var isOldIE = document.all && !window.atob;
+                if (!isOldIE) {
+                    transport.onprogress = opts.progressCallback
+                }
             }
 
             var dataType = opts.dataType
