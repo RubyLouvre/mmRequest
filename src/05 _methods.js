@@ -91,7 +91,6 @@ var XHRMethods = {
         } else {
             this._reject([statusText, this.error || statusText, this])
         }
-        this._complete([this.response || statusText, this.error || statusText, this])
         delete this.transport
     }
 }

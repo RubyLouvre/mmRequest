@@ -62,7 +62,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     var head = DOC.head //HEAD元素
     var isLocal = rlocalProtocol.test(location.protocol)
     avalon.xhr = function() {
-        return new XMLHttpRequest
+        return newXMLHttpRequest
     }
     var supportCors = "withCredentials" in avalon.xhr()
     function parseXML(data, xml, tmp) {
@@ -74,7 +74,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         try {
             xml = (new DOMParser()).parseFromString(data, "text/xml")
         } catch (e) {
-                xml = undefined
+            xml = undefined
         }
 
         if (!xml || xml.getElementsByTagName("parsererror").length) {
@@ -114,7 +114,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 urlAnchor.href = absUrl
                 opts.crossDomain = originAnchor.protocol + "//" + originAnchor.host !== urlAnchor.protocol + "//" + urlAnchor.host
             } catch (e) {
-                    opts.crossDomain = true
+                opts.crossDomain = true
             }
         }
         opts.hasContent = !rnoContent.test(opts.type) //是否为post请求
@@ -123,7 +123,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring
             }
             if (opts.cache === false) { //添加时间截
-                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (new Date - 0)
+                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (newDate - 0)
             }
         }
         return opts
@@ -201,9 +201,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                         try {
                             this.response = avalon.ajaxConverters[dataType].call(this, responseText, responseXML)
                         } catch (e) {
-                                isSuccess = false
-                                this.error = e
-                                statusText = "parsererror"
+                            isSuccess = false
+                            this.error = e
+                            statusText = "parsererror"
                         }
                     }
                 }
@@ -221,7 +221,6 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             } else {
                 this._reject([statusText, this.error || statusText, this])
             }
-            this._complete([this.response || statusText, this.error || statusText, this])
             delete this.transport
         }
     }
@@ -265,12 +264,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
             promise.async = false
         }
-        promise._complete = function(args) {
-            var fn
-            while (fn = completeFns.shift()) {
-                fn.apply(promise, args)
-            }
-        }
+
         promise.always = function(fn) {
             if (typeof fn === "function") {
                 completeFns.push(fn)
@@ -278,17 +272,23 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             return this
         }
 
-        function makeFn(fn) {
-            return typeof fn === "function" ? fn : avalon.noop
+        function fireCallback(type) {
+            return function(args) {
+                var fn = opts[type]
+                if (typeof fn === "function") {
+                    delete opts[type]
+                    var ret = fn.apply(promise, args) //处理success, error
+                }
+                while (fn = completeFns.shift()) { //处理complete
+                    try {
+                        fn.apply(promise, [promise, promise.statusText])
+                    } catch (e) {}
+                }
+                return ret
+            }
         }
 
-        promise.then(function(args) {
-            var fn = makeFn(opts.success)
-            return fn.apply(promise, args)
-        }, function(args) {
-            var fn = makeFn(opts.error)
-            return fn.apply(promise, args)
-        })
+        promise.then(fireCallback("success"), fireCallback("error"))
 
         avalon.mix(promise, XHRProperties, XHRMethods)
 
