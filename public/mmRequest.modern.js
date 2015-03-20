@@ -245,52 +245,54 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             _resolve = resolve
             _reject = reject
         })
-        var completeFns = []
+
         promise.options = opts
         promise._reject = _reject
         promise._resolve = _resolve
-        promise.done = function(onSuccess) {
-            return this.then(function(value) {
-                onSuccess.apply(this, value)
-            })
-        }
-        promise.fail = function(onFail) {
-            return this.then(null, function(reason) {
-                onFail.apply(this, reason)
-            })
-        }
-        var isSync = opts.async === false
-        if (isSync) {
-            avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
-            promise.async = false
+
+        function fireComplete(me, args, fn) {
+            var fns = me._completes || []
+            while (fn = fns.shift()) {
+                try {
+                    fn.apply(me, args)
+                } catch (e) {}
+            }
         }
 
+        Array("done", "fail").forEach(function(method, index) {
+            promise[method] = function(callback) { //添加promise.done, promise.fail
+                var array = [null, null]
+                var me = this
+                if (typeof callback === "function") {
+                    array[index] = function(value) {
+                        callback.apply(me, value) //success, error
+                        fireComplete(me, value) //complete
+                    }
+                    return me.then.apply(me, array)
+                } else {
+                    return me
+                }
+            }
+        })
+
         promise.always = function(fn) {
+            var completeFns = this._completes || (this._completes = [])
             if (typeof fn === "function") {
                 completeFns.push(fn)
             }
             return this
         }
 
-        function fireCallback(type) {
-            return function(args) {
-                var fn = opts[type]
-                if (typeof fn === "function") {
-                    delete opts[type]
-                    var ret = fn.apply(promise, args) //处理success, error
-                }
-                while (fn = completeFns.shift()) { //处理complete
-                    try {
-                        fn.apply(promise, [promise, promise.statusText])
-                    } catch (e) {}
-                }
-                return ret
-            }
+        var isSync = opts.async === false
+        if (isSync) {
+            avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
+            promise.async = false
         }
 
-        promise.then(fireCallback("success"), fireCallback("error"))
 
         avalon.mix(promise, XHRProperties, XHRMethods)
+
+        promise.always(opts.complete).done(opts.success).fail(opts.error)
 
         var dataType = opts.dataType //目标返回数据类型
         var transports = avalon.ajaxTransports
