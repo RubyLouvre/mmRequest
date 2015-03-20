@@ -24,8 +24,8 @@ avalon.ajax = function (opts, promise) {
     promise._reject = _reject
     promise._resolve = _resolve
 
-    function fireComplete(me, args, fn) {
-        var fns = me._completes || []
+    function fireComplete(me, obj, args, fn) {
+        var fns = obj._completes || []
         while (fn = fns.shift()) {
             try {
                 fn.apply(me, args)
@@ -33,23 +33,25 @@ avalon.ajax = function (opts, promise) {
             }
         }
     }
-
+    var  chain = {}
     Array("done", "fail").forEach(function (method, index) {
         promise[method] = function (callback) {//添加promise.done, promise.fail
             var array = [null, null]
             var me = this
             array[index] = function (value) {
-                if (typeof callback === "function") {
-                    callback.apply(me, value)//success, error
-                }
-                fireComplete(me, value)  //complete
+                var chain = callback || function(){}
+               // if (typeof callback === "function") {
+                    chain.apply(me, value)//success, error
+              //  }
+                fireComplete(me, chain, value)  //complete
             }
             return me.then.apply(me, array)
         }
     })
 
     promise.always = function (fn) {
-        var completeFns = this._completes = []
+        var completeFns = chain._completes ||  (chain._completes = [])
+       // var completeFns = this._completes = []
         if (typeof fn === "function") {
             completeFns.push(fn)
         }
