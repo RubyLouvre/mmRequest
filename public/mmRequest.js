@@ -76,15 +76,14 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             "ActiveXObject('Microsoft.XMLHTTP')"
         ]
         s[0] = IE() < 8 && IE() !== 0 && isLocal ? "!" : s[0] //IE下只能使用ActiveXObject
-        for (var i = 0, axo; axo = s[i++]; ) {
+        for (var i = 0, axo; axo = s[i++];) {
             try {
                 if (eval("new " + axo)) {
                     avalon.xhr = new Function("return new " + axo)
                     break
                 }
             } catch (e) {}
-        }
-    }
+        }}
     var supportCors = "withCredentials" in avalon.xhr()
 
 
@@ -102,7 +101,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 xml.loadXML(data)
             }
         } catch (e) {
-                xml = void 0
+            xml = void 0
         }
         if (!xml || !xml.documentElement || xml.getElementsByTagName("parsererror").length) {
             avalon.error("Invalid XML: " + data)
@@ -140,7 +139,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 urlAnchor.href = absUrl
                 opts.crossDomain = originAnchor.protocol + "//" + originAnchor.host !== urlAnchor.protocol + "//" + urlAnchor.host
             } catch (e) {
-                    opts.crossDomain = true
+                opts.crossDomain = true
             }
         }
         opts.hasContent = !rnoContent.test(opts.type) //是否为post请求
@@ -149,7 +148,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring
             }
             if (opts.cache === false) { //添加时间截
-                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (new Date - 0)
+                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (newDate - 0)
             }
         }
         return opts
@@ -227,9 +226,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                         try {
                             this.response = avalon.ajaxConverters[dataType].call(this, responseText, responseXML)
                         } catch (e) {
-                                isSuccess = false
-                                this.error = e
-                                statusText = "parsererror"
+                            isSuccess = false
+                            this.error = e
+                            statusText = "parsererror"
                         }
                     }
                 }
@@ -245,9 +244,8 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             if (isSuccess) {
                 this._resolve([this.response, statusText, this])
             } else {
-                this._reject([statusText, this.error || statusText, this])
+                this._reject([this, statusText, this.error])
             }
-            this._complete([this.response || statusText, this.error || statusText, this])
             delete this.transport
         }
     }
@@ -291,12 +289,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
             promise.async = false
         }
-        promise._complete = function(args) {
-            var fn
-            while (fn = completeFns.shift()) {
-                fn.apply(promise, args)
-            }
-        }
+
         promise.always = function(fn) {
             if (typeof fn === "function") {
                 completeFns.push(fn)
@@ -304,17 +297,23 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             return this
         }
 
-        function makeFn(fn) {
-            return typeof fn === "function" ? fn : avalon.noop
+        function fireCallback(type) {
+            return function(args) {
+                var fn = opts[type]
+                if (typeof fn === "function") {
+                    delete opts[type]
+                    var ret = fn.apply(promise, args) //处理success, error
+                }
+                while (fn = completeFns.shift()) { //处理complete
+                    try {
+                        fn.apply(promise, [promise, promise.statusText])
+                    } catch (e) {}
+                }
+                return ret
+            }
         }
 
-        promise.then(function(args) {
-            var fn = makeFn(opts.success)
-            return fn.apply(promise, args)
-        }, function(args) {
-            var fn = makeFn(opts.error)
-            return fn.apply(promise, args)
-        })
+        promise.then(fireCallback("success"), fireCallback("error"))
 
         avalon.mix(promise, XHRProperties, XHRMethods)
 
@@ -674,8 +673,8 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                             try { //火狐在跨城请求时访问statusText值会抛出异常
                                 var statusText = transport.statusText
                             } catch (e) {
-                                    this.error = e
-                                    statusText = "firefoxAccessError"
+                                this.error = e
+                                statusText = "firefoxAccessError"
                             }
                             //用于处理特殊情况,如果是一个本地请求,只要我们能获取数据就假当它是成功的
                             if (!status && isLocal && !this.options.crossDomain) {
@@ -688,11 +687,11 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                         }
                     }
                 } catch (err) {
-                        // 如果网络问题时访问XHR的属性，在FF会抛异常
-                        // http://helpful.knobs-dials.com/index.php/Component_returned_failure_code:_0x80040111_(NS_ERROR_NOT_AVAILABLE)
-                        if (!forceAbort) {
-                                this.dispatch(500, err)
-                        }
+                    // 如果网络问题时访问XHR的属性，在FF会抛异常
+                    // http://helpful.knobs-dials.com/index.php/Component_returned_failure_code:_0x80040111_(NS_ERROR_NOT_AVAILABLE)
+                    if (!forceAbort) {
+                        this.dispatch(500, err)
+                    }
                 }
             }
         },

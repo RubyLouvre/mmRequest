@@ -1,5 +1,5 @@
 //ajax主函数
-avalon.ajax = function(opts, promise) {
+avalon.ajax = function (opts, promise) {
     if (!opts || !opts.url) {
         avalon.error("参数必须为Object并且拥有url属性")
     }
@@ -15,7 +15,7 @@ avalon.ajax = function(opts, promise) {
         status: 0
     }
     var _reject, _resolve
-    var promise = new avalon.Promise(function(resolve, reject) {
+    var promise = new avalon.Promise(function (resolve, reject) {
         _resolve = resolve
         _reject = reject
     })
@@ -23,13 +23,13 @@ avalon.ajax = function(opts, promise) {
     promise.options = opts
     promise._reject = _reject
     promise._resolve = _resolve
-    promise.done = function(onSuccess){
-        return this.then(function(value){
+    promise.done = function (onSuccess) {
+        return this.then(function (value) {
             onSuccess.apply(this, value)
         })
     }
-    promise.fail = function(onFail){
-        return this.then(null, function(reason){
+    promise.fail = function (onFail) {
+        return this.then(null, function (reason) {
             onFail.apply(this, reason)
         })
     }
@@ -38,30 +38,32 @@ avalon.ajax = function(opts, promise) {
         avalon.log("warnning:与jquery1.8一样,async:false这配置已经被废弃")
         promise.async = false
     }
-    promise._complete = function(args) {
-        var fn
-        while (fn = completeFns.shift()) {
-            fn.apply(promise, args)
-        }
-    }
-    promise.always = function(fn) {
+
+    promise.always = function (fn) {
         if (typeof fn === "function") {
             completeFns.push(fn)
         }
         return this
     }
-    
-    function makeFn(fn){
-        return typeof fn === "function" ? fn : avalon.noop
+
+    function fireCallback(type) {
+        return function (args) {
+            var fn = opts[type]
+            if (typeof fn === "function") {
+                delete opts[type]
+                var ret = fn.apply(promise, args) //处理success, error
+            }
+            while (fn = completeFns.shift()) {//处理complete
+                try {
+                    fn.apply(promise, [promise, promise.statusText])
+                } catch (e) {
+                }
+            }
+            return ret
+        }
     }
 
-    promise.then(function(args) {
-        var fn = makeFn(opts.success)
-        return fn.apply(promise, args)
-    }, function(args) {
-        var fn = makeFn(opts.error)
-        return fn.apply(promise, args)
-    })
+    promise.then(fireCallback("success"), fireCallback("error"))
 
     avalon.mix(promise, XHRProperties, XHRMethods)
 
@@ -88,7 +90,7 @@ avalon.ajax = function(opts, promise) {
     }
     // 4.处理超时
     if (opts.async && opts.timeout > 0) {
-        promise.timeoutID = setTimeout(function() {
+        promise.timeoutID = setTimeout(function () {
             promise.abort("timeout")
             promise.dispatch(0, "timeout")
         }, opts.timeout)
@@ -96,8 +98,8 @@ avalon.ajax = function(opts, promise) {
     promise.request()
     return promise
 };
-"get,post".replace(avalon.rword, function(method) {
-    avalon[method] = function(url, data, callback, type) {
+"get,post".replace(avalon.rword, function (method) {
+    avalon[method] = function (url, data, callback, type) {
         if (typeof data === "function") {
             type = type || callback
             callback = data
@@ -113,13 +115,13 @@ avalon.ajax = function(opts, promise) {
     };
 })
 
-avalon.getScript = function(url, callback) {
+avalon.getScript = function (url, callback) {
     return avalon.get(url, null, callback, "script")
 }
-avalon.getJSON = function(url, data, callback) {
+avalon.getJSON = function (url, data, callback) {
     return avalon.get(url, data, callback, "json")
 }
-avalon.upload = function(url, form, data, callback, dataType) {
+avalon.upload = function (url, form, data, callback, dataType) {
     if (typeof data === "function") {
         dataType = callback;
         callback = data;

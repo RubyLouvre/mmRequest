@@ -10,14 +10,14 @@
  * ajax.send("key=val&key1=val2") 
  */
 var XHRMethods = {
-    setRequestHeader: function(name, value) {
+    setRequestHeader: function (name, value) {
         this.requestHeaders[name] = value;
         return this;
     },
-    getAllResponseHeaders: function() {
+    getAllResponseHeaders: function () {
         return this.readyState === 4 ? this.responseHeadersString : null;
     },
-    getResponseHeader: function(name, match) {
+    getResponseHeader: function (name, match) {
         if (this.readyState === 4) {
             while ((match = rheaders.exec(this.responseHeadersString))) {
                 this.responseHeaders[match[1]] = match[2];
@@ -26,12 +26,12 @@ var XHRMethods = {
         }
         return match === undefined ? null : match;
     },
-    overrideMimeType: function(type) {
+    overrideMimeType: function (type) {
         this.mimeType = type;
         return this;
     },
     // 中止请求
-    abort: function(statusText) {
+    abort: function (statusText) {
         statusText = statusText || "abort";
         if (this.transport) {
             this.respond(0, statusText)
@@ -44,7 +44,7 @@ var XHRMethods = {
      * @param {Number} status 状态码
      * @param {String} statusText 对应的扼要描述
      */
-    dispatch: function(status, nativeStatusText) {
+    dispatch: function (status, nativeStatusText) {
         var statusText = nativeStatusText
         // 只能执行一次，防止重复执行
         if (!this.transport) { //2:已执行回调
@@ -89,9 +89,8 @@ var XHRMethods = {
         if (isSuccess) {
             this._resolve([this.response, statusText, this])
         } else {
-            this._reject([statusText, this.error || statusText, this])
+            this._reject([this, statusText, this.error])
         }
-        this._complete([this.response || statusText, this.error || statusText, this])
         delete this.transport
     }
 }
