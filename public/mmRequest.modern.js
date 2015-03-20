@@ -263,15 +263,13 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             promise[method] = function(callback) { //添加promise.done, promise.fail
                 var array = [null, null]
                 var me = this
-                if (typeof callback === "function") {
-                    array[index] = function(value) {
+                array[index] = function(value) {
+                    if (typeof callback === "function") {
                         callback.apply(me, value) //success, error
-                        fireComplete(me, value) //complete
                     }
-                    return me.then.apply(me, array)
-                } else {
-                    return me
+                    fireComplete(me, value) //complete
                 }
+                return me.then.apply(me, array)
             }
         })
 
