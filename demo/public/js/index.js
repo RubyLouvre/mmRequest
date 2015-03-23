@@ -2,7 +2,7 @@
 
 require(['./mmRequest', 'domReady!'], function(avalon) {
 
-	var corssDomain = '//127.0.0.1:9000/';
+	var corssDomain = '//127.0.0.1:9000';
 
 	var vmodel = avalon.define({
 		$id: 'demo',
@@ -39,6 +39,12 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			}).fail(function() {
+				console.log(arguments)
+			}).fail(function() {
+				console.log(arguments)
+			}).always(function() {
+				console.log(arguments)
 			});
 		},
 		ajaxGet: function() {
@@ -55,6 +61,12 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			}).fail(function() {
+				console.log(arguments)
+			}).fail(function() {
+				console.log(arguments)
+			}).always(function() {
+				console.log(arguments)
 			});
 		},
 
@@ -241,6 +253,52 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			});
+		},
+
+
+		promiseDone: function() {
+			avalon.ajax({
+				url: '/api',
+				type: 'get',
+				cache: false,
+				data: {
+					test: 'send me back'
+				}
+			}).done(function() {
+				avalon.log('done-1')
+				avalon.log(arguments);
+			}).done(function() {
+				avalon.log('done-2')
+				console.log(arguments)
+			}).fail(function() {
+				avalon.log('fail')
+				console.log(arguments)
+			}).always(function() {
+				avalon.log('always')
+				console.log(arguments)
+			});
+		},
+		promiseFail: function() {
+			avalon.ajax({
+				url: '/err',
+				type: 'get',
+				cache: false,
+				data: {
+					test: 'send me back'
+				}
+			}).done(function() {
+				avalon.log('done')
+				avalon.log(arguments);
+			}).fail(function() {
+				avalon.log('fail-1')
+				console.log(arguments)
+			}).fail(function() {
+				avalon.log('fail-2')
+				console.log(arguments)
+			}).always(function() {
+				avalon.log('always')
+				console.log(arguments)
 			});
 		}
 
