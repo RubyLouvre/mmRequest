@@ -32,5 +32,5 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 路由控制器
 app.use('/', routes);
 
-console.log("请在浏览器中输入http://localhost:3000/demo")
+console.log("请在浏览器中输入 http://localhost:3000")
 module.exports = app;
