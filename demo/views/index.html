@@ -31,7 +31,7 @@
 <pre><code class="javascript">var sendType = 'avalon.get';
 vmodel.state.setSend(sendType);
 
-avalon.get('/demo/api', {
+avalon.get('/api', {
 	sendType: sendType,
 	arr: ['html', 'css', 'js']
 }).done(function(res) {
@@ -44,7 +44,7 @@ avalon.get('/demo/api', {
 vmodel.state.setSend(sendType);
 
 avalon.ajax({
-	url: '/demo/api',
+	url: '/api',
 	type: 'get',
 	cache: false,
 	data: {
@@ -66,7 +66,7 @@ avalon.ajax({
 <pre><code class="javascript">var sendType = 'avalon.post';
 vmodel.state.setSend(sendType);
 
-avalon.post('/demo/api?age=12', {
+avalon.post('/api?age=12', {
 	sendType: sendType
 }).done(function(res) {
 	avalon.log(res);
@@ -78,7 +78,7 @@ avalon.post('/demo/api?age=12', {
 vmodel.state.setSend(sendType);
 
 avalon.ajax({
-	url: '/demo/api',
+	url: '/api',
 	type: 'post',
 	data: {
 		sendType: sendType
@@ -102,7 +102,7 @@ avalon.ajax({
 formData.append('sendType', sendType);
 vmodel.state.setSend(sendType);
 
-avalon.upload('/demo/api?age=12', formData, {
+avalon.upload('/api?age=12', formData, {
 	name: 'avalon'
 }).done(function(res) {
 	avalon.log(res);
@@ -117,7 +117,7 @@ formData.append('sendType', sendType);
 vmodel.state.setSend(sendType);
 
 avalon.ajax({
-	url: '/demo/api',
+	url: '/api',
 	form: formData,
 	data: {
 		name: 'avalon'
@@ -138,7 +138,7 @@ avalon.ajax({
 <pre><code class="javascript">var sendType = 'avalon.getJSON';
 vmodel.state.setSend(sendType);
 
-avalon.getJSON('/demo/api', {
+avalon.getJSON('/api', {
 	sendType: sendType
 }).done(function(res) {
 	avalon.log(res);
@@ -150,7 +150,7 @@ avalon.getJSON('/demo/api', {
 vmodel.state.setSend(sendType);
 
 avalon.ajax({
-	url: '/demo/api',
+	url: '/api',
 	data: {
 		sendType: sendType
 	},
@@ -335,8 +335,8 @@ vmodel.serializeStr = str;</code></pre>
 		<legend><h2>Promise</h2></legend>
 		<p>和 Promise 配合使用。</p>
 
-<pre><code class="javascript">var url1 = '/demo/api',
-	url2 = '/demo/api',
+<pre><code class="javascript">var url1 = '/api',
+	url2 = '/api',
 	callback1, callback2;
 callback1 = function() {
 	return 1;

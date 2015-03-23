@@ -123,7 +123,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring
             }
             if (opts.cache === false) { //添加时间截
-                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (newDate - 0)
+                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (new Date() - 0)
             }
         }
         return opts

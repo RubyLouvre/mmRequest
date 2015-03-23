@@ -2,6 +2,9 @@
   "name": "mmRequest",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "start": "node demo/bin/www"
+  },
   "devDependencies": {
     "gulp": "~3.8.11",
     "gulp-concat": "~2.5.2",

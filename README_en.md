@@ -74,12 +74,10 @@ If you are in China unfortunately, try [cnpm](http://cnpmjs.org/).
 Start sever:
 
 ```
-cd ../ && node demo/bin/www
+cd ../ && npm install
 ```
 
-If you installed [supervisor](https://github.com/isaacs/node-supervisor), you can use it to start the server.
-
-Now, open your browser and visit `http://127.0.0.1:3000/demo`, you will see the demo. You can configure the port in `demo/bin/www`.
+Now, open your browser and visit `http://127.0.0.1:3000`, you will see the demo. You can configure the port in `demo/bin/www`.
 
 Before you test cross-domain requests, you need to simulate a cross-domain environment. You can clone this repository to another path and start another server with a different port as the back-end server (In this demo, the port of the back-end server is `9000`).
 
