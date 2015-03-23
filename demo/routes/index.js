@@ -24,5 +24,11 @@ router.get('/jsonp', function(req, res, next) {
 	res.jsonp(req.query);
 });
 
+/* error */
+router.get('/err', function(req, res, next) {
+	console.log('--------------err--------------');
+	throw new Error('error in server')
+});
+
 
 module.exports = router;

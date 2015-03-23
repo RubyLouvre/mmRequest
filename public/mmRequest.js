@@ -148,7 +148,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring
             }
             if (opts.cache === false) { //添加时间截
-                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (newDate - 0)
+                opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (new Date() - 0)
             }
         }
         return opts
@@ -601,7 +601,11 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                  * progress
                  */
                 if (opts.progressCallback) {
-                    transport.onprogress = opts.progressCallback
+                    // 判断是否 ie6-9
+                    var isOldIE = document.all && !window.atob
+                    if (!isOldIE) {
+                        transport.onprogress = opts.progressCallback
+                    }
                 }
 
                 var dataType = opts.dataType

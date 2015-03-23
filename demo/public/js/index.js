@@ -2,7 +2,7 @@
 
 require(['./mmRequest', 'domReady!'], function(avalon) {
 
-	var corssDomain = '//127.0.0.1:9000/demo';
+	var corssDomain = '//127.0.0.1:9000';
 
 	var vmodel = avalon.define({
 		$id: 'demo',
@@ -33,12 +33,18 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			var sendType = 'avalon.get';
 			vmodel.state.setSend(sendType);
 
-			avalon.get('/demo/api', {
+			avalon.get('/api', {
 				sendType: sendType,
 				arr: ['html', 'css', 'js']
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			}).fail(function() {
+				console.log(arguments)
+			}).fail(function() {
+				console.log(arguments)
+			}).always(function() {
+				console.log(arguments)
 			});
 		},
 		ajaxGet: function() {
@@ -46,7 +52,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			vmodel.state.setSend(sendType);
 
 			avalon.ajax({
-				url: '/demo/api',
+				url: '/api',
 				type: 'get',
 				cache: false,
 				data: {
@@ -55,6 +61,12 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			}).fail(function() {
+				console.log(arguments)
+			}).fail(function() {
+				console.log(arguments)
+			}).always(function() {
+				console.log(arguments)
 			});
 		},
 
@@ -63,7 +75,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			var sendType = 'avalon.post';
 			vmodel.state.setSend(sendType);
 
-			avalon.post('/demo/api?age=12', {
+			avalon.post('/api?age=12', {
 				sendType: sendType
 			}).done(function(res) {
 				avalon.log(res);
@@ -75,7 +87,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			vmodel.state.setSend(sendType);
 
 			avalon.ajax({
-				url: '/demo/api',
+				url: '/api',
 				type: 'post',
 				data: {
 					sendType: sendType
@@ -94,7 +106,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			formData.append('sendType', sendType);
 			vmodel.state.setSend(sendType);
 
-			avalon.upload('/demo/api?age=12', formData, {
+			avalon.upload('/api?age=12', formData, {
 				name: 'avalon'
 			}).done(function(res) {
 				avalon.log(res);
@@ -109,7 +121,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			vmodel.state.setSend(sendType);
 
 			avalon.ajax({
-				url: '/demo/api',
+				url: '/api',
 				form: formData,
 				data: {
 					name: 'avalon'
@@ -126,7 +138,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			var sendType = 'avalon.getJSON';
 			vmodel.state.setSend(sendType);
 
-			avalon.getJSON('/demo/api', {
+			avalon.getJSON('/api', {
 				sendType: sendType
 			}).done(function(res) {
 				avalon.log(res);
@@ -138,7 +150,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			vmodel.state.setSend(sendType);
 
 			avalon.ajax({
-				url: '/demo/api',
+				url: '/api',
 				data: {
 					sendType: sendType
 				},
@@ -241,6 +253,52 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
+			});
+		},
+
+
+		promiseDone: function() {
+			avalon.ajax({
+				url: '/api',
+				type: 'get',
+				cache: false,
+				data: {
+					test: 'send me back'
+				}
+			}).done(function() {
+				avalon.log('done-1')
+				avalon.log(arguments);
+			}).done(function() {
+				avalon.log('done-2')
+				console.log(arguments)
+			}).fail(function() {
+				avalon.log('fail')
+				console.log(arguments)
+			}).always(function() {
+				avalon.log('always')
+				console.log(arguments)
+			});
+		},
+		promiseFail: function() {
+			avalon.ajax({
+				url: '/err',
+				type: 'get',
+				cache: false,
+				data: {
+					test: 'send me back'
+				}
+			}).done(function() {
+				avalon.log('done')
+				avalon.log(arguments);
+			}).fail(function() {
+				avalon.log('fail-1')
+				console.log(arguments)
+			}).fail(function() {
+				avalon.log('fail-2')
+				console.log(arguments)
+			}).always(function() {
+				avalon.log('always')
+				console.log(arguments)
 			});
 		}
 
