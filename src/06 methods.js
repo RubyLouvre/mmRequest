@@ -24,38 +24,27 @@ avalon.ajax = function (opts, promise) {
     promise._reject = _reject
     promise._resolve = _resolve
 
-    function fireComplete(me, obj, args, fn) {
-        var fns = obj._completes || []
-        while (fn = fns.shift()) {
-            try {
-                fn.apply(me, args)
-            } catch (e) {
-            }
-        }
-    }
-    var  chain = {}
     Array("done", "fail").forEach(function (method, index) {
         promise[method] = function (callback) {//添加promise.done, promise.fail
-            var array = [null, null]
-            var me = this
-            array[index] = function (value) {
-                var chain = callback || function(){}
-               // if (typeof callback === "function") {
-                    chain.apply(me, value)//success, error
-              //  }
-                fireComplete(me, chain, value)  //complete
+            var array = [ok, ng]
+            if (typeof callback === "function") {
+                array[index] = function (value) {
+                    value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+                    return callback.apply(me, value)//success, error
+                }
             }
-            return me.then.apply(me, array)
+            var me = this.then.apply(this, array)
+            return me
         }
     })
 
     promise.always = function (fn) {
-        var completeFns = chain._completes ||  (chain._completes = [])
-       // var completeFns = this._completes = []
-        if (typeof fn === "function") {
-            completeFns.push(fn)
+        var callback = function (value) {
+            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+            return (fn || ok).apply(me, value)
         }
-        return this
+        var me = this.then(callback, callback)
+        return me
     }
 
     var isSync = opts.async === false
@@ -67,7 +56,7 @@ avalon.ajax = function (opts, promise) {
 
     avalon.mix(promise, XHRProperties, XHRMethods)
 
-    promise.always(opts.complete).done(opts.success).fail(opts.error)
+    promise.done(opts.success).fail(opts.error).always(opts.complete)
 
     var dataType = opts.dataType  //目标返回数据类型
     var transports = avalon.ajaxTransports
@@ -116,7 +105,12 @@ avalon.ajax = function (opts, promise) {
         })
     };
 })
-
+function ok(val) {
+    return val
+}
+function ng(e) {
+    throw e
+}
 avalon.getScript = function (url, callback) {
     return avalon.get(url, null, callback, "script")
 }
