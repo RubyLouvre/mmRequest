@@ -24,27 +24,28 @@ avalon.ajax = function (opts, promise) {
     promise._reject = _reject
     promise._resolve = _resolve
 
-    Array("done", "fail").forEach(function (method, index) {
-        promise[method] = function (callback) {//添加promise.done, promise.fail
-            var array = [ok, ng]
-            if (typeof callback === "function") {
-                array[index] = function (value) {
-                    value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
-                    return callback.apply(me, value)//success, error
-                }
-            }
-            var me = this.then.apply(this, array)
-            return me
+
+    var doneList = [], failList = []
+    
+    promise.done = function (fn) {
+        if (typeof fn === "funciton") {
+            doneList.push(fn)
         }
-    })
+        return this
+    }
+    promise.fail = function (fn) {
+        if (typeof fn === "funciton") {
+            failList.push(fn)
+        }
+        return this
+    }
 
     promise.always = function (fn) {
-        var callback = function (value) {
-            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
-            return (fn || ok).apply(me, value)
+        if (typeof fn === "funciton") {
+            doneList.push(fn)
+            failList.push(fn)
         }
-        var me = this.then(callback, callback)
-        return me
+        return this
     }
 
     var isSync = opts.async === false
@@ -55,6 +56,21 @@ avalon.ajax = function (opts, promise) {
 
 
     avalon.mix(promise, XHRProperties, XHRMethods)
+
+    promise.then(function (value) {
+        value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+        for (var i = 0, fn; fn = doneList[i++]; ) {
+            fn.apply(promise, value)
+        }
+        return value
+    }, function (value) {
+        value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+        for (var i = 0, fn; fn = failList[i++]; ) {
+            fn.apply(promise, value)
+        }
+        return value
+    })
+    
 
     promise.done(opts.success).fail(opts.error).always(opts.complete)
 
