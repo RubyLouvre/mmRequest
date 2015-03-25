@@ -265,17 +265,18 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 				data: {
 					test: 'send me back'
 				}
-			}).done(function() {
+			}).done(function(a) {
 				avalon.log('done-1')
 				avalon.log(arguments);
-			}).done(function() {
-				avalon.log('done-2')
-				console.log(arguments)
-			}).fail(function() {
+                                return 1000000000
+			}).done(function(a) {
+				avalon.log('done-2!')
+				console.log(a)
+			}).fail(function(e) {
 				avalon.log('fail')
-				console.log(arguments)
+				console.log(e)
 			}).always(function() {
-				avalon.log('always')
+				avalon.log('这是最后执行的ok')
 				console.log(arguments)
 			});
 		},
@@ -297,7 +298,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 				avalon.log('fail-2')
 				console.log(arguments)
 			}).always(function() {
-				avalon.log('always')
+				avalon.log('这是最后执行的ng')
 				console.log(arguments)
 			});
 		}

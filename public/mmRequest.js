@@ -275,38 +275,20 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         promise._reject = _reject
         promise._resolve = _resolve
 
-        function fireComplete(me, obj, args, fn) {
-            var fns = obj._completes || []
-            while (fn = fns.shift()) {
-                try {
-                    fn.apply(me, args)
-                } catch (e) {}
-            }
-        }
-        var chain = {}
-        Array("done", "fail").forEach(function(method, index) {
-            promise[method] = function(callback) { //添加promise.done, promise.fail
-                var array = [null, null]
-                var me = this
-                array[index] = function(value) {
-                    var chain = callback || function() {}
-                    // if (typeof callback === "function") {
-                    chain.apply(me, value) //success, error
-                    //  }
-                    fireComplete(me, chain, value) //complete
+        var doneList = [],
+            failList = []
+
+        Array("done", "fail", "always").forEach(function(method) {
+            promise[method] = function(fn) {
+                if (typeof fn === "funciton") {
+                    if (method !== "fail")
+                        doneList.push(fn)
+                    if (method !== "done")
+                        failList.push(fn)
                 }
-                return me.then.apply(me, array)
+                return this
             }
         })
-
-        promise.always = function(fn) {
-            var completeFns = chain._completes || (chain._completes = [])
-            // var completeFns = this._completes = []
-            if (typeof fn === "function") {
-                completeFns.push(fn)
-            }
-            return this
-        }
 
         var isSync = opts.async === false
         if (isSync) {
@@ -317,7 +299,22 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
         avalon.mix(promise, XHRProperties, XHRMethods)
 
-        promise.always(opts.complete).done(opts.success).fail(opts.error)
+        promise.then(function(value) {
+            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+            for (var i = 0, fn; fn = doneList[i++];) {
+                fn.apply(promise, value)
+            }
+            return value
+        }, function(value) {
+            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+            for (var i = 0, fn; fn = failList[i++];) {
+                fn.apply(promise, value)
+            }
+            return value
+        })
+
+
+        promise.done(opts.success).fail(opts.error).always(opts.complete)
 
         var dataType = opts.dataType //目标返回数据类型
         var transports = avalon.ajaxTransports
@@ -366,7 +363,12 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             })
         }
     })
-
+    function ok(val) {
+        return val
+    }
+    function ng(e) {
+        throw e
+    }
     avalon.getScript = function(url, callback) {
         return avalon.get(url, null, callback, "script")
     }
