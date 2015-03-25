@@ -28,7 +28,7 @@ avalon.ajax = function (opts, promise) {
 
     Array("done", "fail", "always").forEach(function (method) {
         promise[method] = function (fn) {
-            if (typeof fn === "funciton") {
+            if (typeof fn === "function") {
                 if (method !== "fail")
                     doneList.push(fn)
                 if (method !== "done")
