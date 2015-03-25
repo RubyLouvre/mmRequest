@@ -250,28 +250,20 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         promise._reject = _reject
         promise._resolve = _resolve
 
-        Array("done", "fail").forEach(function(method, index) {
-            promise[method] = function(callback) { //添加promise.done, promise.fail
-                var array = [ok, ng]
-                if (typeof callback === "function") {
-                    array[index] = function(value) {
-                        value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
-                        return callback.apply(me, value) //success, error
-                    }
+        var doneList = [],
+            failList = []
+
+        Array("done", "fail", "always").forEach(function(method) {
+            promise[method] = function(fn) {
+                if (typeof fn === "funciton") {
+                    if (method !== "fail")
+                        doneList.push(fn)
+                    if (method !== "done")
+                        failList.push(fn)
                 }
-                var me = this.then.apply(this, array)
-                return me
+                return this
             }
         })
-
-        promise.always = function(fn) {
-            var callback = function(value) {
-                value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
-                return (fn || ok).apply(me, value)
-            }
-            var me = this.then(callback, callback)
-            return me
-        }
 
         var isSync = opts.async === false
         if (isSync) {
@@ -281,6 +273,21 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
 
         avalon.mix(promise, XHRProperties, XHRMethods)
+
+        promise.then(function(value) {
+            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+            for (var i = 0, fn; fn = doneList[i++];) {
+                fn.apply(promise, value)
+            }
+            return value
+        }, function(value) {
+            value = Array.isArray(value) ? value : value === void 0 ? [] : [value]
+            for (var i = 0, fn; fn = failList[i++];) {
+                fn.apply(promise, value)
+            }
+            return value
+        })
+
 
         promise.done(opts.success).fail(opts.error).always(opts.complete)
 

@@ -24,29 +24,19 @@ avalon.ajax = function (opts, promise) {
     promise._reject = _reject
     promise._resolve = _resolve
 
-
     var doneList = [], failList = []
-    
-    promise.done = function (fn) {
-        if (typeof fn === "funciton") {
-            doneList.push(fn)
-        }
-        return this
-    }
-    promise.fail = function (fn) {
-        if (typeof fn === "funciton") {
-            failList.push(fn)
-        }
-        return this
-    }
 
-    promise.always = function (fn) {
-        if (typeof fn === "funciton") {
-            doneList.push(fn)
-            failList.push(fn)
+    Array("done", "fail", "always").forEach(function (method) {
+        promise[method] = function (fn) {
+            if (typeof fn === "funciton") {
+                if (method !== "fail")
+                    doneList.push(fn)
+                if (method !== "done")
+                    failList.push(fn)
+            }
+            return this
         }
-        return this
-    }
+    })
 
     var isSync = opts.async === false
     if (isSync) {
@@ -70,7 +60,7 @@ avalon.ajax = function (opts, promise) {
         }
         return value
     })
-    
+
 
     promise.done(opts.success).fail(opts.error).always(opts.complete)
 
