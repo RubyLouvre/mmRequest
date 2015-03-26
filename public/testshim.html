@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="require.js">
+
+        </script>
+        <script>
+            require.config({
+                paths: {
+                    avalon: "avalon.shim",
+                    mmRequest: "mmRequest",
+                    mmPromise: "mmPromise"
+                },
+                shim: {
+                    avalon: {
+                        exports: "avalon"
+                    }
+                }
+            })
+            require(["mmRequest"], function (a) {
+                var s
+                var p = new Promise(function (ss) {
+                    s = ss
+                })
+                //   s(100)
+                setTimeout(function () {
+                    s(100)
+                }, 500)
+                setTimeout(function () {
+                    s(1000)
+                }, 1000)
+                setTimeout(function () {
+                    p.then(function (a) {
+                        console.log(a)
+                        //   return a
+                    })
+                    p.then(function (a) {
+                        console.log(a)
+                    })
+                }, 1500)
+
+
+
+                var oldConsole = window.console
+
+                window.console = {
+                    log: function (str) {
+                        if (oldConsole) {
+                            oldConsole.log(str)
+                        }
+                        var div = document.createElement("div")
+                        div.innerHTML = String(str).slice(0, 50);
+                        document.body.appendChild(div);
+                    }
+                }
+                console.log(a)
+                console.log(a.Promise)
+                console.log(a.ajax)
+            })
+        </script>
+    </head>
+    <body>
+        <h1>测试avalon.shim + mmPequest</h1>
+    </body>
+</html>
