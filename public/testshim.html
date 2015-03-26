@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="require.js">
+            
+        </script>
+        <script>
+            require.config({
+                paths:{
+                    avalon: "avalon.shim",
+                   
+                },
+                shim: {
+                    avalon: {
+                        exports: "avalon"
+                    }
+                }
+            })
+            require(["mmRequest"], function(a){
+                console.log(a)
+                console.log(a.Promise)
+                console.log(a.ajax)
+            })
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+    </body>
+</html>
