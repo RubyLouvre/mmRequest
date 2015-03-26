@@ -24,7 +24,7 @@ A set of key/value pairs that configure the Ajax request. `url` is required whil
 
 > Type: Boolean
 
-> If set to false, it will force requested pages not to be cached by the browser. Note: Setting cache to false will only work correctly with HEAD and GET requests. It works by appending "_={timestamp}" to the GET parameters. The parameter is not needed for other types of requests, except in IE8 when a POST is made to a URL that has already been requested by a GET.
+> If set to false, it will force requested pages not to be cached by the browser. **Note:** Setting cache to false will only work correctly with HEAD and GET requests. It works by appending "_={timestamp}" to the GET parameters. The parameter is not needed for other types of requests, except in IE8 when a POST is made to a URL that has already been requested by a GET.
 
 > ---
 
@@ -74,7 +74,7 @@ A set of key/value pairs that configure the Ajax request. `url` is required whil
 
 >> ---
 
->> "script": Evaluates the response as JavaScript and returns it as plain text. Disables caching by appending a query string parameter, "_=[TIMESTAMP]", to the URL unless the cache option is set to true. Note: This will turn POSTs into GETs for remote-domain requests.
+>> "script": Evaluates the response as JavaScript and returns it as plain text. Disables caching by appending a query string parameter, "_=[TIMESTAMP]", to the URL unless the cache option is set to true. **Note:** This will turn POSTs into GETs for remote-domain requests.
 
 >> ---
 
@@ -199,14 +199,14 @@ The msXHR objects returned by `avalon.ajax()` implement the Promise interface, g
 
     An alternative construct to the success callback option.
 
-- **msXHR.fail(function( statusText, error|statusText, msXHR ) {});**
+- **msXHR.fail(function( msXHR, statusText, errorThrown  ) {});**
 
     An alternative construct to the error callback option.
 
-- **msXHR.always(function( data|statusText, error|statusText, msXHR ) {});**
+- **msXHR.always(function( data|msXHR, statusText, msXHR|errorThrown ) {});**
 
-    In response to a successful request, the function's arguments are the same as those of .done(): data, statusText, and the msXHR object. For failed requests the arguments are the same as those of .fail(): the statusText, errorThrown, and msXHR object.
+    In response to a successful request, the function's arguments are the same as those of .done(): data, statusText, and the msXHR object. For failed requests the arguments are the same as those of .fail(): the msXHR object, statusText, and errorThrown.
 
-- **msXHR.then(function( data, statusText, msXHR ) {}, function( statusText, error|statusText, msXHR ) {});**
+- **msXHR.then(function( data, statusText, msXHR ) {}, function( msXHR, statusText, errorThrown ) {});**
 
-    Incorporates the functionality of the .done() and .fail() methods, allowing the underlying Promise to be manipulated.
+    Incorporates the functionality of the .done() and .fail() methods, allowing the underlying Promise to be manipulated. **Note:** callbacks registered by `.then()` will be fired at the last.
