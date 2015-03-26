@@ -21,7 +21,29 @@
                 }
             })
             require(["mmRequest"], function (a) {
-           
+                var s
+                var p = new Promise(function (ss) {
+                    s = ss
+                })
+                //   s(100)
+                setTimeout(function () {
+                    s(100)
+                }, 500)
+                setTimeout(function () {
+                    s(1000)
+                }, 1000)
+                setTimeout(function () {
+                    p.then(function (a) {
+                        console.log(a)
+                        //   return a
+                    })
+                    p.then(function (a) {
+                        console.log(a)
+                    })
+                }, 1500)
+
+
+
                 var oldConsole = window.console
 
                 window.console = {
