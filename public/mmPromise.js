@@ -10,6 +10,21 @@ define(["avalon"], function (avalon) {
     function ng(e) {
         throw e
     }
+
+    function done(onSuccess) {//添加成功回调
+        return this.then(onSuccess, ng)
+    }
+    function fail(onFail) {//添加出错回调
+        return this.then(ok, onFail)
+    }
+    function defer() {
+        var ret = {};
+        ret.promise = new this(function (resolve, reject) {
+            ret.resolve = resolve
+            ret.reject = reject
+        });
+        return ret
+    }
     var msPromise = function (executor) {
         this._callbacks = []
         var me = this
@@ -188,20 +203,7 @@ define(["avalon"], function (avalon) {
     }
     msPromise.defer = defer
 
-    function done(onSuccess) {//添加成功回调
-        return this.then(onSuccess, ng)
-    }
-    function fail(onFail) {//添加出错回调
-        return this.then(ok, onFail)
-    }
-    function defer() {
-        var ret = {};
-        ret.promise = new this(function (resolve, reject) {
-            ret.resolve = resolve
-            ret.reject = reject
-        });
-        return ret
-    }
+
 
     avalon.Promise = msPromise
     var nativePromise = window.Promise
@@ -212,8 +214,8 @@ define(["avalon"], function (avalon) {
             nativePromise.defer = defer
         }
     }
-
     return window.Promise = nativePromise || msPromise
+
 })
 //https://github.com/ecomfe/er/blob/master/src/Deferred.js
 //http://jser.info/post/77696682011/es6-promises
