@@ -5,13 +5,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="require.js">
-            
+
         </script>
         <script>
             require.config({
-                paths:{
+                paths: {
                     avalon: "avalon.shim",
-                   
+                    mmRequest: "mmRequest",
+                    mmPromise: "mmPromise"
                 },
                 shim: {
                     avalon: {
@@ -19,7 +20,19 @@
                     }
                 }
             })
-            require(["mmRequest"], function(a){
+            require(["mmRequest"], function (a) {
+                var oldConsole = window.console
+
+                window.console = {
+                    log: function (str) {
+                        if (oldConsole) {
+                            oldConsole.log(str)
+                        }
+                        var div = document.createElement("div")
+                        div.innerHTML = String(str).slice(0, 50);
+                        document.body.appendChild(div);
+                    }
+                }
                 console.log(a)
                 console.log(a.Promise)
                 console.log(a.ajax)
@@ -27,6 +40,6 @@
         </script>
     </head>
     <body>
-        <div>TODO write content</div>
+        <h1>测试avalon.shim + mmPequest</h1>
     </body>
 </html>
