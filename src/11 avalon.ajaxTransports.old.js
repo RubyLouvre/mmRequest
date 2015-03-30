@@ -76,6 +76,11 @@ var transports = avalon.ajaxTransports = {
             if (!transport) {
                 return
             }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
+            }
             try {
                 var completed = transport.readyState === 4
                 if (forceAbort || completed) {
@@ -174,6 +179,11 @@ var transports = avalon.ajaxTransports = {
             var node = this.transport
             if (!node) {
                 return
+            }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
             }
             var execute = /loaded|complete|undefined/i.test(node.readyState)
             if (forceAbort || execute) {
