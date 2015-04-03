@@ -606,7 +606,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                     // 判断是否 ie6-9
                     var isOldIE = document.all && !window.atob
                     if (!isOldIE) {
-                        transport.onprogress = opts.progressCallback
+                        transport.upload.onprogress = opts.progressCallback
                     }
                 }
 
