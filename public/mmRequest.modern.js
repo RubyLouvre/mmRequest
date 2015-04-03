@@ -579,7 +579,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                  * progress
                  */
                 if (opts.progressCallback) {
-                    transport.onprogress = opts.progressCallback
+                    transport.upload.onprogress = opts.progressCallback
                 }
 
                 var dataType = opts.dataType

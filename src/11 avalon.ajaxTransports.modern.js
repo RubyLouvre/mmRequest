@@ -37,7 +37,7 @@ var transports = avalon.ajaxTransports = {
              * progress
              */
             if(opts.progressCallback) {
-                transport.onprogress = opts.progressCallback
+                transport.upload.onprogress = opts.progressCallback
             }
 
             var dataType = opts.dataType
