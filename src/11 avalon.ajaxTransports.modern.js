@@ -37,7 +37,7 @@ var transports = avalon.ajaxTransports = {
              * progress
              */
             if(opts.progressCallback) {
-                transport.onprogress = opts.progressCallback
+                transport.upload.onprogress = opts.progressCallback
             }
 
             var dataType = opts.dataType
@@ -62,6 +62,12 @@ var transports = avalon.ajaxTransports = {
             if (!transport) {
                 return;
             }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
+            }
+
             var completed = transport.readyState === 4
             if (forceAbort || completed) {
                 transport.onerror = transport.onload = null
@@ -129,6 +135,11 @@ var transports = avalon.ajaxTransports = {
             var node = this.transport
             if (!node) {
                 return
+            }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
             }
             node.onerror = node.onload = null
             var parent = node.parentNode;

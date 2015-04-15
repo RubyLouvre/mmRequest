@@ -39,7 +39,7 @@ var transports = avalon.ajaxTransports = {
                 // 判断是否 ie6-9
                 var isOldIE = document.all && !window.atob;
                 if (!isOldIE) {
-                    transport.onprogress = opts.progressCallback
+                    transport.upload.onprogress = opts.progressCallback
                 }
             }
 
@@ -75,6 +75,11 @@ var transports = avalon.ajaxTransports = {
             var transport = this.transport
             if (!transport) {
                 return
+            }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
             }
             try {
                 var completed = transport.readyState === 4
@@ -174,6 +179,11 @@ var transports = avalon.ajaxTransports = {
             var node = this.transport
             if (!node) {
                 return
+            }
+            // by zilong：避免abort后还继续派发onerror等事件
+            if (forceAbort && this.timeoutID) {
+                clearTimeout(this.timeoutID);
+                delete this.timeoutID
             }
             var execute = /loaded|complete|undefined/i.test(node.readyState)
             if (forceAbort || execute) {

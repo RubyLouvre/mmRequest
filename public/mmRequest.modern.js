@@ -579,7 +579,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                  * progress
                  */
                 if (opts.progressCallback) {
-                    transport.onprogress = opts.progressCallback
+                    transport.upload.onprogress = opts.progressCallback
                 }
 
                 var dataType = opts.dataType
@@ -604,6 +604,12 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 if (!transport) {
                     return
                 }
+                // by zilong：避免abort后还继续派发onerror等事件
+                if (forceAbort && this.timeoutID) {
+                    clearTimeout(this.timeoutID)
+                    delete this.timeoutID
+                }
+
                 var completed = transport.readyState === 4
                 if (forceAbort || completed) {
                     transport.onerror = transport.onload = null
@@ -671,6 +677,11 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 var node = this.transport
                 if (!node) {
                     return
+                }
+                // by zilong：避免abort后还继续派发onerror等事件
+                if (forceAbort && this.timeoutID) {
+                    clearTimeout(this.timeoutID)
+                    delete this.timeoutID
                 }
                 node.onerror = node.onload = null
                 var parent = node.parentNode
