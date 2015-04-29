@@ -390,6 +390,15 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             success: callback
         })
     }
+
+
+
+    avalon.ajaxGlobalEventHandler = {}
+
+    ;["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
+        avalon.ajaxGlobalEventHandler[method] = avalon.noop
+    })
+
     avalon.ajaxConverters = { //转换器，返回用户想要做的数据
         text: function(text) {
             // return text || "";

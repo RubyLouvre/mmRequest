@@ -138,3 +138,11 @@ avalon.upload = function (url, form, data, callback, dataType) {
         success: callback
     });
 }
+
+
+
+avalon.ajaxGlobalEventHandler = {};
+
+["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
+    avalon.ajaxGlobalEventHandler[method] = avalon.noop
+})
