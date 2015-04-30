@@ -393,10 +393,10 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
 
 
-    avalon.ajaxGlobalEventHandler = {}
+    avalon.ajaxGlobalEvents = {}
 
     ;["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
-        avalon.ajaxGlobalEventHandler[method] = avalon.noop
+        avalon.ajaxGlobalEvents[method] = avalon.noop
     })
 
     avalon.ajaxConverters = { //转换器，返回用户想要做的数据

@@ -141,8 +141,8 @@ avalon.upload = function (url, form, data, callback, dataType) {
 
 
 
-avalon.ajaxGlobalEventHandler = {};
+avalon.ajaxGlobalEvents = {};
 
 ["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
-    avalon.ajaxGlobalEventHandler[method] = avalon.noop
+    avalon.ajaxGlobalEvents[method] = avalon.noop
 })
