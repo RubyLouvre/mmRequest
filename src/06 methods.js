@@ -1,3 +1,6 @@
+// 记录当前活跃的 ajax 数
+var ajaxActive = 0
+
 //ajax主函数
 avalon.ajax = function (opts, promise) {
     if (!opts || !opts.url) {
@@ -92,6 +95,19 @@ avalon.ajax = function (opts, promise) {
             promise.dispatch(0, "timeout")
         }, opts.timeout)
     }
+
+    /**
+     * global event handler
+     */
+    if (ajaxActive === 0) {
+        // 第一个
+        avalon.ajaxGlobalEvents.start()
+    }
+    avalon.ajaxGlobalEvents.send(promise, opts)
+    ajaxActive ++
+
+
+
     promise.request()
     return promise
 };

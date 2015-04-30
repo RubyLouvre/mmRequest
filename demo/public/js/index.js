@@ -244,7 +244,7 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			});
 		},
 
-
+		// promise
 		promiseDone: function() {
 			avalon.ajax({
 				url: '/api',
@@ -298,6 +298,32 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 				avalon.log('always-2')
 				console.log(arguments)
 			});
+		},
+
+		// 全局事件
+		bindGlobalEventHandlers: function() {
+			console.log('已绑定全局事件')
+
+			var ajaxGlobalEvents = avalon.ajaxGlobalEvents
+
+			ajaxGlobalEvents.start = function() {
+				console.log('g---start')
+			}
+			ajaxGlobalEvents.send = function() {
+				console.log('g---send', arguments)
+			}
+			ajaxGlobalEvents.success = function() {
+				console.log('g---success', arguments)
+			}
+			ajaxGlobalEvents.error = function() {
+				console.log('g---error', arguments)
+			}
+			ajaxGlobalEvents.complete = function() {
+				console.log('g---complete', arguments)
+			}
+			ajaxGlobalEvents.stop = function() {
+				console.log('g---stop')
+			}
 		}
 
 

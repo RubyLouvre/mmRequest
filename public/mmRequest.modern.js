@@ -1,5 +1,7 @@
 //=========================================
 //  数据交互模块 by 司徒正美
+//  版本: 1.0.0
+//  最近更新: 2015/4/30
 //==========================================
 define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     var global = this || (0, eval)("this")
@@ -215,15 +217,53 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 delete this.timeoutID
             }
             this._transport = this.transport
+
+            /**
+             * global event handler
+             */
+            var that = this
+
             // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
             if (isSuccess) {
                 this._resolve([this.response, statusText, this])
+                /**
+                 * global event handler
+                 */
+                window.setTimeout(function() {
+                    avalon.ajaxGlobalEvents.success(that, that.options, that.response)
+                }, 0)
             } else {
                 this._reject([this, statusText, this.error])
+                /**
+                 * global event handler
+                 */
+                window.setTimeout(function() {
+                    avalon.ajaxGlobalEvents.error(that, that.options, statusText)
+                }, 0)
             }
             delete this.transport
+
+            /**
+             * global event handler
+             */
+            ajaxActive--
+
+            window.setTimeout(function() {
+                avalon.ajaxGlobalEvents.complete(that, that.options)
+            }, 0)
+
+            if (ajaxActive === 0) {
+                // 最后一个
+                window.setTimeout(function() {
+                    avalon.ajaxGlobalEvents.stop()
+                }, 0)
+            }
+
         }
     }
+    // 记录当前活跃的 ajax 数
+    var ajaxActive = 0
+
     //ajax主函数
     avalon.ajax = function(opts, promise) {
         if (!opts || !opts.url) {
@@ -319,6 +359,19 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 promise.dispatch(0, "timeout")
             }, opts.timeout)
         }
+
+        /**
+         * global event handler
+         */
+        if (ajaxActive === 0) {
+            // 第一个
+            avalon.ajaxGlobalEvents.start()
+        }
+        avalon.ajaxGlobalEvents.send(promise, opts)
+        ajaxActive++
+
+
+
         promise.request()
         return promise
     }
