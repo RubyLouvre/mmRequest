@@ -103,4 +103,4 @@ gulp
 Changelog
 ------------
 
-2015.3.13 Import mmPromise.js again
+See [CHANGELOG.md](CHANGELOG.md).
