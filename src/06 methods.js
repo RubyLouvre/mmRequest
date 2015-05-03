@@ -1,3 +1,6 @@
+/**
+ * global event handler
+ */
 // 记录当前活跃的 ajax 数
 var ajaxActive = 0
 
@@ -156,7 +159,9 @@ avalon.upload = function (url, form, data, callback, dataType) {
 }
 
 
-
+/**
+ * global event handler
+ */
 avalon.ajaxGlobalEvents = {};
 
 ["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
