@@ -105,4 +105,5 @@ gulp
 更新日志
 ------------
 
-2015.3.13 重新引入 mmPromise.js
+见 [CHANGELOG.md](CHANGELOG.md)
+

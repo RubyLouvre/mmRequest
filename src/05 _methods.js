@@ -85,12 +85,47 @@ var XHRMethods = {
             delete this.timeoutID
         }
         this._transport = this.transport;
+
+        /**
+         * global event handler
+         */
+        var that = this
+
         // 到这要么成功，调用success, 要么失败，调用 error, 最终都会调用 complete
         if (isSuccess) {
             this._resolve([this.response, statusText, this])
+            /**
+             * global event handler
+             */
+            window.setTimeout(function() {
+                avalon.ajaxGlobalEvents.success(that, that.options, that.response)
+            }, 0)
         } else {
             this._reject([this, statusText, this.error])
+            /**
+             * global event handler
+             */
+            window.setTimeout(function() {
+                avalon.ajaxGlobalEvents.error(that, that.options, statusText)
+            }, 0)
         }
         delete this.transport
+
+        /**
+         * global event handler
+         */
+        ajaxActive --
+        
+        window.setTimeout(function() {
+            avalon.ajaxGlobalEvents.complete(that, that.options)
+        }, 0)
+        
+        if (ajaxActive === 0) {
+            // 最后一个
+            window.setTimeout(function() {
+                avalon.ajaxGlobalEvents.stop()
+            }, 0)
+        }
+
     }
 }

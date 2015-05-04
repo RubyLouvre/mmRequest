@@ -1,3 +1,9 @@
+/**
+ * global event handler
+ */
+// 记录当前活跃的 ajax 数
+var ajaxActive = 0
+
 //ajax主函数
 avalon.ajax = function (opts, promise) {
     if (!opts || !opts.url) {
@@ -92,6 +98,19 @@ avalon.ajax = function (opts, promise) {
             promise.dispatch(0, "timeout")
         }, opts.timeout)
     }
+
+    /**
+     * global event handler
+     */
+    if (ajaxActive === 0) {
+        // 第一个
+        avalon.ajaxGlobalEvents.start()
+    }
+    avalon.ajaxGlobalEvents.send(promise, opts)
+    ajaxActive ++
+
+
+
     promise.request()
     return promise
 };
@@ -138,3 +157,13 @@ avalon.upload = function (url, form, data, callback, dataType) {
         success: callback
     });
 }
+
+
+/**
+ * global event handler
+ */
+avalon.ajaxGlobalEvents = {};
+
+["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
+    avalon.ajaxGlobalEvents[method] = avalon.noop
+})
