@@ -403,6 +403,38 @@ Promise.all([
 
 	</fieldset>
 
+	<!-- global event functions -->
+	<fieldset>
+		<legend><h2>全局事件绑定</h2></legend>
+
+		<p>ajax 全局事件绑定</p>
+
+		<p><button ms-click="bindGlobalEventHandlers">绑定全局事件</button></p>
+
+<pre><code class="javascript">var ajaxGlobalEvents = avalon.ajaxGlobalEvents
+
+ajaxGlobalEvents.start = function() {
+	console.log('g---start')
+}
+ajaxGlobalEvents.send = function() {
+	console.log('g---send', arguments)
+}
+ajaxGlobalEvents.success = function() {
+	console.log('g---success', arguments)
+}
+ajaxGlobalEvents.error = function() {
+	console.log('g---error', arguments)
+}
+ajaxGlobalEvents.complete = function() {
+	console.log('g---complete', arguments)
+}
+ajaxGlobalEvents.stop = function() {
+	console.log('g---stop')
+}</code></pre>
+
+	</fieldset>
+
+
 <!--
 <p>dataType 为 jsonp，type 为 post，无法传输 data</p>
 <p>dataType 为 json，type 为 post，报错，没有根据 url 含有 callback 自动改为 jsonp</p>
