@@ -206,7 +206,3 @@ The msXHR objects returned by `avalon.ajax()` implement the Promise interface, g
 - **msXHR.always(function( data|msXHR, statusText, msXHR|errorThrown ) {});**
 
     In response to a successful request, the function's arguments are the same as those of .done(): data, statusText, and the msXHR object. For failed requests the arguments are the same as those of .fail(): the msXHR object, statusText, and errorThrown.
-
-- **msXHR.then(function( data, statusText, msXHR ) {}, function( msXHR, statusText, errorThrown ) {});**
-
-    Incorporates the functionality of the .done() and .fail() methods, allowing the underlying Promise to be manipulated. **Note:** callbacks registered by `.then()` will be fired at the last.
