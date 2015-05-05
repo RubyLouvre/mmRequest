@@ -55,10 +55,6 @@ require(['./mmRequest', 'domReady!'], function(avalon) {
 			}).done(function(res) {
 				avalon.log(res);
 				vmodel.state.setSucc(res);
-			}).then(function(res) {
-				avalon.log(res);
-			}).always(function() {
-				avalon.log(res);
 			});
 		},
 
