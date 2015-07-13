@@ -11,6 +11,8 @@ var rhash = /#.*$/
 var rquery = /\?/
 var rjsonp = /(=)\?(?=&|$)|\?\?/
 var r20 = /%20/g
+var radd = /\+/g
+var r5b5d = /%5B(.*?)%5D$/;
 
 var originAnchor = document.createElement("a")
 originAnchor.href = location.href

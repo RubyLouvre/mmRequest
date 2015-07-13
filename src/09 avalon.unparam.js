@@ -1,68 +1,116 @@
 //将一个字符串转换为对象
-avalon.unparam = function(input) {
-    var items, temp,
-            expBrackets = /\[(.*?)\]/g,
-            expVarname = /(.+?)\[/,
-            result = {};
-
-    if ((temp = avalon.type(input)) != 'string' || (temp == 'string' && !temp.length))
-        return {};
-    if (input.indexOf("?") !== -1) {
-        input = input.split("?").pop()
+function tryDecodeURIComponent(value) {
+    try {
+        return decodeURIComponent(value);
+    } catch (e) {
+        return value
     }
-    items = decode(input).split('&')
+}
 
-    if (!(temp = items.length) || (temp == 1 && temp === ''))
-        return result;
 
-    items.forEach(function(item) {
-        if (!item.length)
-            return
-        temp = item.split("=")
-        var key = temp.shift(),
-                value = temp.join('=').replace(/\+/g, ' '),
-                size, link, subitems = [];
+//a%5B0%5D%5Bvalue%5D a%5B1%5D%5B%5D
+function addSubObject(host, text, value) {
+    var match = text.match(r5b5d)
+    if (!match) {
+        return true
+    }
 
-        if (!key.length)
-            return
-
-        while ((temp = expBrackets.exec(key)))
-            subitems.push(temp[1])
-
-        if (!(size = subitems.length)) {
-            result[key] = value
-            return
+    var steps = []
+    var first = true
+    var step, index, key
+    while (index = text.lastIndexOf("%5B")) {
+        if (index === -1) {
+            break
         }
-        size--
-        temp = expVarname.exec(key)
-
-        if (!temp || !(key = temp[1]) || !key.length)
-            return
-
-        if (avalon.type(result[key]) !== 'object')
-            result[key] = {}
-
-        link = result[key]
-
-        avalon.each(subitems, function(subindex, subitem) {
-            if (!(temp = subitem).length) {
-                temp = 0
-
-                avalon.each(link, function(num) {
-                    if (!isNaN(num) && num >= 0 && (num % 1 === 0) && num >= temp)
-                        temp = Number(num) + 1;
-                });
-            }
-            if (subindex == size) {
-                link[temp] = value;
-            } else if (avalon.type(link[temp]) !== 'object') {
-                link = link[temp] = {};
+        key = text.slice(index).slice(3, -3)
+        text = text.slice(0, index)
+        if (key === "") {
+            steps.unshift({
+                action: "pushArrayElement"
+            })
+        } else if ((key >>> 0) + "" === key) {
+            steps.unshift({
+                action: "setSubArray",
+                value: key
+            })
+        } else {
+            if (first) {
+                steps.unshift({
+                    action: "setObjectProperty",
+                    value: tryDecodeURIComponent(key)
+                })
             } else {
-                link = link[temp];
+                steps.unshift({
+                    action: "setSubObjet",
+                    value: tryDecodeURIComponent(key)
+                })
             }
+        }
+        first = false
+    }
+    first = true
+    while (step = steps.shift()) {
+        var isObject = /Object/.test(step.action)
+        if (first) {
+            if (!(text in host)) {
+                host[text] = isObject ? {} : []
+            }
+            first = false
+            host = host[text]
+        }
+        switch (step.action) {
+            case "pushArrayElement":
+                host.push(value)
+                break
+            case "setObjectProperty":
+                host[step.value] = value
+                break
+            case "setSubObjet":
+                if (!(step.value in host)) {
+                    host[step.value] = {}
+                }
+                host = host[step.value]
+                break
+            case "setSubArray":
+                if (!(step.value in host)) {
+                    host[step.value] = []
+                }
+                host = host[step.value]
+                break
+        }
+    }
+}
+//  function add
+avalon.unparam = function(qs, sep, eq) {
+    sep = sep || '&';
+    eq = eq || '=';
+    var obj = {};
+    if ((typeof qs !== "string") || qs.length === 0) {
+        return obj;
+    }
+    if(qs.indexOf("?") !== -1){
+        qs = qs.split("?").pop()
+    }
+    var array = qs.split(sep);
+    for (var i = 0, el; el = array[i++]; ) {
+        var arr = el.split("=")
+        if (arr.length === 1) {//处理只有键名没键值的情况
+            obj[arr[0]] = ""
+        } else {
+            var key = arr[0].replace(radd, '%20')
+            var v = tryDecodeURIComponent(arr.slice(1).join("=").replace(radd, ' '));
+            if (addSubObject(obj, key, v)) { //处理存在中括号的情况
+                var k = tryDecodeURIComponent(key) //处理不存在中括号的简单的情况
+                if (!Object.prototype.hasOwnProperty.call(obj, k)) {
+                    obj[k] = v;
+                } else if (Array.isArray(obj[k])) {
+                    obj[k].push(v);
+                } else {
+                    obj[k] = [obj[k], v];
+                }
+            }
+        }
+    }
 
-        });
-
-    });
-    return result;
-};
+    return obj
+}

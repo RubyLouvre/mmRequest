@@ -49,6 +49,21 @@ avalon.upload( url, form [,data] [, success(data, textStatus, XHR)] [, dataType]
 avalon.getJSON( url [, data ] [, success( data, textStatus, jqXHR ) ] )
 avalon.getScript( url [, success(script, textStatus, jqXHR) ] )
 
+avalon可以在配置对象使用headers来指定头部, 
+```javascript
+avalon.ajax({
+	type: "POST",
+	url: "your-path",
+	headers: {
+      xxx: "yyy"
+
+   },
+   success: function(){}
+
+})
+
+```
+
 /*
  * 一些有用的工具类方法：
  */
