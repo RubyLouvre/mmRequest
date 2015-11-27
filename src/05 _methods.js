@@ -50,24 +50,24 @@ var XHRMethods = {
         if (!this.transport) { //2:已执行回调
             return
         }
-        this.readyState = 4;
+        this.readyState = 4
         var isSuccess = status >= 200 && status < 300 || status === 304
         if (isSuccess) {
             if (status === 204) {
-                statusText = "nocontent";
+                statusText = "nocontent"
             } else if (status === 304) {
-                statusText = "notmodified";
+                statusText = "notmodified"
             } else {
                 //如果浏览器能直接返回转换好的数据就最好不过,否则需要手动转换
                 if (typeof this.response === "undefined") {
                     var dataType = this.options.dataType || this.options.mimeType
                     if (!dataType && this.responseText || this.responseXML) { //如果没有指定dataType，则根据mimeType或Content-Type进行揣测
                         dataType = this.getResponseHeader("Content-Type") || ""
-                        dataType = dataType.match(/json|xml|script|html/) || ["text"]
-                        dataType = dataType[0];
+                        dataType = dataType.match(/json|xml|script|html/i) || ["text"]
+                        dataType = dataType[0].toLowerCase()
                     }
                     var responseText = this.responseText || '',
-                            responseXML = this.responseXML || '';
+                            responseXML = this.responseXML || ''
                     try {
                         this.response = avalon.ajaxConverters[dataType].call(this, responseText, responseXML)
                     } catch (e) {
@@ -84,7 +84,7 @@ var XHRMethods = {
             clearTimeout(this.timeoutID)
             delete this.timeoutID
         }
-        this._transport = this.transport;
+        this._transport = this.transport
 
         /**
          * global event handler

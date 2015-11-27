@@ -1,4 +1,4 @@
-var global = this || (0, eval)("this")
+var global = window
 var DOC = global.document
 var encode = encodeURIComponent
 var decode = decodeURIComponent

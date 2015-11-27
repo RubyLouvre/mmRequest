@@ -1,7 +1,6 @@
 var gulp = require('gulp'),
 	concat = require('gulp-concat'),
-    esformatter = require('gulp-esformatter'),
-	less = require('semicolon-less/gulpplugin');
+    esformatter = require('gulp-esformatter')
 
 var paths = {
 	old: [
@@ -44,7 +43,7 @@ gulp.task('old', function() {
             value: '    '
         }
     }))
-    .pipe(less())
+   
     .pipe(gulp.dest('public'));
 });
 
@@ -56,7 +55,7 @@ gulp.task('modern', function() {
             value: '    '
         }
     }))
-    .pipe(less())
+   
     .pipe(gulp.dest('public'));
 });
 

@@ -4,7 +4,7 @@
 //  最近更新: 2015/4/30
 //==========================================
 define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
-    var global = this || (0, eval)("this")
+    var global = window
     var DOC = global.document
     var encode = encodeURIComponent
     var decode = decodeURIComponent
@@ -18,7 +18,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     var rjsonp = /(=)\?(?=&|$)|\?\?/
     var r20 = /%20/g
     var radd = /\+/g
-    var r5b5d = /%5B(.*?)%5D$/
+    var r5b5d = /%5B(.*?)%5D$/;
 
     var originAnchor = document.createElement("a")
     originAnchor.href = location.href
@@ -48,7 +48,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         if (code) {
             if (code.indexOf("use strict") === 1) {
                 var script = document.createElement("script")
-                script.text = code
+                script.text = code;
                 head.appendChild(script).parentNode.removeChild(script)
             } else {
                 indirect(code)
@@ -58,19 +58,19 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
     if (!String.prototype.startsWith) {
         String.prototype.startsWith = function(searchString, position) {
-            position = position || 0
-            return this.lastIndexOf(searchString, position) === position
+            position = position || 0;
+            return this.lastIndexOf(searchString, position) === position;
         }
     }
 
     var head = DOC.head //HEAD元素
     var isLocal = rlocalProtocol.test(location.protocol)
     avalon.xhr = function() {
-        return new XMLHttpRequest
+        return newXMLHttpRequest
     }
     var supportCors = "withCredentials" in avalon.xhr()
     function parseXML(data, xml, tmp) {
-        var xml
+        var xml;
         if (!data || typeof data !== "string") {
             return null
         }
@@ -78,7 +78,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         try {
             xml = (new DOMParser()).parseFromString(data, "text/xml")
         } catch (e) {
-            xml = undefined
+        xml = undefined
         }
 
         if (!xml || xml.getElementsByTagName("parsererror").length) {
@@ -108,29 +108,29 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         opts.url = opts.url.replace(rhash, "").replace(rprotocol, location.protocol + "//")
 
         if (typeof opts.crossDomain !== "boolean") { //判定是否跨域
-            var urlAnchor = document.createElement("a")
+            var urlAnchor = document.createElement("a");
             // Support: IE6-11+
             // IE throws exception if url is malformed, e.g. http://example.com:80x/
             try {
-                urlAnchor.href = opts.url
+                urlAnchor.href = opts.url;
                 // in IE7-, get the absolute path
-                var absUrl = !"1"[0] ? urlAnchor.getAttribute("href", 4) : urlAnchor.href
+                var absUrl = !"1"[0] ? urlAnchor.getAttribute("href", 4) : urlAnchor.href;
                 urlAnchor.href = absUrl
-                opts.crossDomain = originAnchor.protocol + "//" + originAnchor.host !== urlAnchor.protocol + "//" + urlAnchor.host
+                opts.crossDomain = originAnchor.protocol + "//" + originAnchor.host !== urlAnchor.protocol + "//" + urlAnchor.host;
             } catch (e) {
-                opts.crossDomain = true
+            opts.crossDomain = true;
             }
         }
         opts.hasContent = !rnoContent.test(opts.type) //是否为post请求
         if (!opts.hasContent) {
             if (querystring) { //如果为GET请求,则参数依附于url上
-                opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring
+                opts.url += (rquery.test(opts.url) ? "&" : "?") + querystring;
             }
             if (opts.cache === false) { //添加时间截
                 opts.url += (rquery.test(opts.url) ? "&" : "?") + "_time=" + (new Date() - 0)
             }
         }
-        return opts
+        return opts;
     }
     /**
      * 伪XMLHttpRequest类,用于屏蔽浏览器差异性
@@ -145,32 +145,32 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
      */
     var XHRMethods = {
         setRequestHeader: function(name, value) {
-            this.requestHeaders[name] = value
-            return this
+            this.requestHeaders[name] = value;
+            return this;
         },
         getAllResponseHeaders: function() {
-            return this.readyState === 4 ? this.responseHeadersString : null
+            return this.readyState === 4 ? this.responseHeadersString : null;
         },
         getResponseHeader: function(name, match) {
             if (this.readyState === 4) {
                 while ((match = rheaders.exec(this.responseHeadersString))) {
-                    this.responseHeaders[match[1]] = match[2]
+                    this.responseHeaders[match[1]] = match[2];
                 }
-                match = this.responseHeaders[name]
+                match = this.responseHeaders[name];
             }
-            return match === undefined ? null : match
+            return match === undefined ? null : match;
         },
         overrideMimeType: function(type) {
-            this.mimeType = type
-            return this
+            this.mimeType = type;
+            return this;
         },
         // 中止请求
         abort: function(statusText) {
-            statusText = statusText || "abort"
+            statusText = statusText || "abort";
             if (this.transport) {
                 this.respond(0, statusText)
             }
-            return this
+            return this;
         },
         /**
          * 用于派发success,error,complete等回调
@@ -197,22 +197,22 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                         var dataType = this.options.dataType || this.options.mimeType
                         if (!dataType && this.responseText || this.responseXML) { //如果没有指定dataType，则根据mimeType或Content-Type进行揣测
                             dataType = this.getResponseHeader("Content-Type") || ""
-                            dataType = dataType.match(/json|xml|script|html/) || ["text"]
-                            dataType = dataType[0]
+                            dataType = dataType.match(/json|xml|script|html/i) || ["text"]
+                            dataType = dataType[0].toLowerCase()
                         }
                         var responseText = this.responseText || '',
                             responseXML = this.responseXML || ''
                         try {
                             this.response = avalon.ajaxConverters[dataType].call(this, responseText, responseXML)
                         } catch (e) {
-                            isSuccess = false
-                            this.error = e
-                            statusText = "parsererror"
+                        isSuccess = false
+                        this.error = e
+                        statusText = "parsererror"
                         }
                     }
                 }
             }
-            this.status = status
+            this.status = status;
             this.statusText = statusText + ""
             if (this.timeoutID) {
                 clearTimeout(this.timeoutID)
@@ -379,7 +379,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
         promise.request()
         return promise
-    }
+    };
     "get,post".replace(avalon.rword, function(method) {
         avalon[method] = function(url, data, callback, type) {
             if (typeof data === "function") {
@@ -394,7 +394,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 success: callback,
                 dataType: type
             })
-        }
+        };
     })
     function ok(val) {
         return val
@@ -410,9 +410,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     }
     avalon.upload = function(url, form, data, callback, dataType) {
         if (typeof data === "function") {
-            dataType = callback
-            callback = data
-            data = void 0
+            dataType = callback;
+            callback = data;
+            data = void 0;
         }
         return avalon.ajax({
             url: url,
@@ -421,23 +421,23 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             form: form,
             data: data,
             success: callback
-        })
+        });
     }
 
 
     /**
      * global event handler
      */
-    avalon.ajaxGlobalEvents = {}
+    avalon.ajaxGlobalEvents = {};
 
-    ;["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
+    ["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
         avalon.ajaxGlobalEvents[method] = avalon.noop
     })
 
     avalon.ajaxConverters = { //转换器，返回用户想要做的数据
         text: function(text) {
             // return text || "";
-            return text
+            return text;
         },
         xml: function(text, xml) {
             return xml !== void 0 ? xml : parseXML(text)
@@ -453,10 +453,10 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         },
         script: function(text) {
             parseJS(text)
-            return text
+            return text;
         },
         jsonp: function() {
-            var json, callbackName
+            var json, callbackName;
             if (this.jsonpCallback.startsWith('avalon.')) {
                 callbackName = this.jsonpCallback.replace(/avalon\./, '')
                 json = avalon[callbackName]
@@ -464,7 +464,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             } else {
                 json = window[this.jsonpCallback]
             }
-            return json
+            return json;
         }
     }
 
@@ -474,8 +474,8 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             s = [],
             add = function(key, value) {
                 // If value is a function, invoke it and return its value
-                value = typeof value === "function" ? value() : (value == null ? "" : value)
-                s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
+                value = typeof value === "function" ? value() : (value == null ? "" : value);
+                s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
         }
         // 处理数组与类数组的jquery对象
         if (Array.isArray(obj)) {
@@ -484,47 +484,47 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
         } else {
             for (prefix in obj) {
-                paramInner(prefix, obj[prefix], add)
+                paramInner(prefix, obj[prefix], add);
             }
         }
 
         // Return the resulting serialization
-        return s.join("&").replace(r20, "+")
+        return s.join("&").replace(r20, "+");
     }
 
     function paramInner(prefix, obj, add) {
-        var name
+        var name;
         if (Array.isArray(obj)) {
             // Serialize array item.
             avalon.each(obj, function(i, v) {
                 if (rbracket.test(prefix)) {
                     // Treat each array item as a scalar.
-                    add(prefix, v)
+                    add(prefix, v);
                 } else {
                     // Item is non-scalar (array or object), encode its numeric index.
                     paramInner(
                         prefix + "[" + (typeof v === "object" ? i : "") + "]",
                         v,
-                        add)
+                        add);
                 }
-            })
+            });
         } else if (avalon.isPlainObject(obj)) {
             // Serialize object item.
             for (name in obj) {
-                paramInner(prefix + "[" + name + "]", obj[name], add)
+                paramInner(prefix + "[" + name + "]", obj[name], add);
             }
 
         } else {
             // Serialize scalar item.
-            add(prefix, obj)
+            add(prefix, obj);
         }
     }
     //将一个字符串转换为对象
     function tryDecodeURIComponent(value) {
         try {
-            return decodeURIComponent(value)
+            return decodeURIComponent(value);
         } catch (e) {
-            return value
+        return value
         }
     }
 
@@ -603,31 +603,31 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     }
     //  function add
     avalon.unparam = function(qs, sep, eq) {
-        sep = sep || '&'
-        eq = eq || '='
-        var obj = {}
+        sep = sep || '&';
+        eq = eq || '=';
+        var obj = {};
         if ((typeof qs !== "string") || qs.length === 0) {
-            return obj
+            return obj;
         }
         if (qs.indexOf("?") !== -1) {
             qs = qs.split("?").pop()
         }
-        var array = qs.split(sep)
+        var array = qs.split(sep);
         for (var i = 0, el; el = array[i++];) {
             var arr = el.split("=")
             if (arr.length === 1) { //处理只有键名没键值的情况
                 obj[arr[0]] = ""
             } else {
                 var key = arr[0].replace(radd, '%20')
-                var v = tryDecodeURIComponent(arr.slice(1).join("=").replace(radd, ' '))
+                var v = tryDecodeURIComponent(arr.slice(1).join("=").replace(radd, ' '));
                 if (addSubObject(obj, key, v)) { //处理存在中括号的情况
                     var k = tryDecodeURIComponent(key) //处理不存在中括号的简单的情况
                     if (!Object.prototype.hasOwnProperty.call(obj, k)) {
-                        obj[k] = v
+                        obj[k] = v;
                     } else if (Array.isArray(obj[k])) {
-                        obj[k].push(v)
+                        obj[k].push(v);
                     } else {
-                        obj[k] = [obj[k], v]
+                        obj[k] = [obj[k], v];
                     }
                 }
             }
@@ -643,7 +643,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     }
     //表单元素变字符串, form为一个元素节点
     avalon.serialize = function(form) {
-        var json = {}
+        var json = {};
         // 不直接转换form.elements，防止以下情况：   <form > <input name="elements"/><input name="test"/></form>
         Array.prototype.filter.call(form.getElementsByTagName("*"), function(el) {
             if (rinput.test(el.nodeName) && el.name && !el.disabled) {
@@ -674,9 +674,9 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         xhr: {
             //发送请求
             request: function() {
-                var self = this
-                var opts = this.options
-                var transport = this.transport = new avalon.xhr
+                var self = this;
+                var opts = this.options;
+                var transport = this.transport = new avalon.xhr;
                 transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
                 if (this.mimeType && transport.overrideMimeType) {
                     transport.overrideMimeType(this.mimeType)
@@ -710,8 +710,8 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
 
                 var dataType = opts.dataType
                 if ("responseType" in transport && /^(blob|arraybuffer|text)$/.test(dataType)) {
-                    transport.responseType = dataType
-                    this.useResponseType = true
+                    transport.responseType = dataType;
+                    this.useResponseType = true;
                 }
                 //必须要支持 FormData 和 file.fileList 的浏览器 才能用 xhr 发送
                 //标准规定的 multipart/form-data 发送必须用 utf-8 格式， 记得 ie 会受到 document.charset 的影响
@@ -728,11 +728,11 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             respond: function(event, forceAbort) {
                 var transport = this.transport
                 if (!transport) {
-                    return
+                    return;
                 }
                 // by zilong：避免abort后还继续派发onerror等事件
                 if (forceAbort && this.timeoutID) {
-                    clearTimeout(this.timeoutID)
+                    clearTimeout(this.timeoutID);
                     delete this.timeoutID
                 }
 
@@ -764,7 +764,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         },
         jsonp: {
             preproccess: function() {
-                var opts = this.options
+                var opts = this.options;
                 var name = this.jsonpCallback = opts.jsonpCallback || "avalon.jsonp" + setTimeout("1")
                 if (rjsonp.test(opts.url)) {
                     opts.url = opts.url.replace(rjsonp, "$1" + name)
@@ -787,7 +787,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
         },
         script: {
             request: function() {
-                var opts = this.options
+                var opts = this.options;
                 var node = this.transport = DOC.createElement("script")
                 if (opts.charset) {
                     node.charset = opts.charset
@@ -806,16 +806,16 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
                 }
                 // by zilong：避免abort后还继续派发onerror等事件
                 if (forceAbort && this.timeoutID) {
-                    clearTimeout(this.timeoutID)
+                    clearTimeout(this.timeoutID);
                     delete this.timeoutID
                 }
                 node.onerror = node.onload = null
-                var parent = node.parentNode
+                var parent = node.parentNode;
                 if (parent) {
                     parent.removeChild(node)
                 }
                 if (!forceAbort) {
-                    var args
+                    var args;
                     if (this.jsonpCallback) {
                         var jsonpCallback = this.jsonpCallback.startsWith('avalon.') ? avalon[this.jsonpCallback.replace(/avalon\./, '')] : window[this.jsonpCallback]
                         args = typeof jsonpCallback === "function" ? [500, "error"] : [200, "success"]
@@ -830,15 +830,15 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
             preproccess: function() {
                 var opts = this.options, formdata
                 if (typeof opts.form.append === "function") { //简单判断opts.form是否为FormData
-                    formdata = opts.form
-                    opts.contentType = ''
+                    formdata = opts.form;
+                    opts.contentType = '';
                 } else {
                     formdata = new FormData(opts.form) //将二进制什么一下子打包到formdata
                 }
                 avalon.each(opts.data, function(key, val) {
                     formdata.append(key, val) //添加客外数据
                 })
-                this.formdata = formdata
+                this.formdata = formdata;
             }
         }
     }
