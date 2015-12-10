@@ -66,7 +66,7 @@ define("mmRequest", ["avalon", "mmPromise"], function(avalon) {
     var head = DOC.head //HEAD元素
     var isLocal = rlocalProtocol.test(location.protocol)
     avalon.xhr = function() {
-        return newXMLHttpRequest
+        return new XMLHttpRequest()
     }
     var supportCors = "withCredentials" in avalon.xhr()
     function parseXML(data, xml, tmp) {
