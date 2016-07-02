@@ -13,32 +13,32 @@ var rheaders = /^(.*?):[ \t]*([^\r\n]*)\r?$/mg
 
 var XHRMethods = {
     setRequestHeader: function (name, value) {
-        this.requestHeaders[name] = value;
-        return this;
+        this.requestHeaders[name] = value
+        return this
     },
     getAllResponseHeaders: function () {
-        return this.readyState === 4 ? this.responseHeadersString : null;
+        return this.readyState === 4 ? this.responseHeadersString : null
     },
     getResponseHeader: function (name, match) {
         if (this.readyState === 4) {
             while ((match = rheaders.exec(this.responseHeadersString))) {
-                this.responseHeaders[match[1]] = match[2];
+                this.responseHeaders[match[1]] = match[2]
             }
-            match = this.responseHeaders[name];
+            match = this.responseHeaders[name]
         }
-        return match === undefined ? null : match;
+        return match === undefined ? null : match
     },
     overrideMimeType: function (type) {
-        this.mimeType = type;
-        return this;
+        this.mimeType = type
+        return this
     },
     // 中止请求
     abort: function (statusText) {
-        statusText = statusText || "abort";
+        statusText = statusText || "abort"
         if (this.transport) {
             this.respond(0, statusText)
         }
-        return this;
+        return this
     },
     /**
      * 用于派发success,error,complete等回调
@@ -80,7 +80,7 @@ var XHRMethods = {
                 }
             }
         }
-        this.status = status;
+        this.status = status
         this.statusText = statusText + ""
         if (this.timeoutID) {
             clearTimeout(this.timeoutID)

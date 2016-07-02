@@ -1,6 +1,6 @@
 var isLocal = false
 var rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/
-var msie = require('ie')
+var msie = require('../ie')
 try {
     //在IE下如果重置了document.domain，直接访问window.location会抛错，但用document.URL就ok了
     //http://www.cnblogs.com/WuQiang/archive/2012/09/21/2697474.html
@@ -20,7 +20,7 @@ for (var i = 0, axo; axo = s[i++]; ) {
     try {
         if (eval("new " + axo)) {
             avalon.xhr = new Function("return new " + axo)
-            break;
+            break
         }
     } catch (e) {
     }

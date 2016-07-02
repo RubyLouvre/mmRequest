@@ -4,7 +4,7 @@ function parseJS(code) {
     if (code) {
         if (code.indexOf("use strict") === 1) {
             var script = document.createElement("script")
-            script.text = code;
+            script.text = code
             head.appendChild(script).parentNode.removeChild(script)
         } else {
             indirect(code)
@@ -16,7 +16,7 @@ var head = require('./head')
 avalon.ajaxConverters = {//转换器，返回用户想要做的数据
     text: function(text) {
         // return text || "";
-        return text;
+        return text
     },
     xml: function(text, xml) {
         return xml !== void 0 ? xml : avalon.parseXML(text)
@@ -29,10 +29,10 @@ avalon.ajaxConverters = {//转换器，返回用户想要做的数据
     },
     script: function(text) {
         parseJS(text)
-        return text;
+        return text
     },
     jsonp: function() {
-        var json, callbackName;
+        var json, callbackName
         if (this.jsonpCallback.startsWith('avalon.')) {
             callbackName = this.jsonpCallback.replace(/avalon\./,'')
             json = avalon[callbackName]
@@ -40,7 +40,7 @@ avalon.ajaxConverters = {//转换器，返回用户想要做的数据
         } else {
             json = window[this.jsonpCallback]
         }
-        return json;
+        return json
     }
 }
 

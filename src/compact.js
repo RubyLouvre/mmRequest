@@ -12,6 +12,7 @@ function fail(onFail) {//添加出错回调
 }
 Promise.prototype.done = done
 Promise.prototype.fail = fail
+require('./getXHR/compact')
 
 var supportCors = require('./supportCors')
 var rjsonp = require('./rjsonp')
@@ -177,7 +178,7 @@ avalon.upload = function (url, form, data, callback, dataType) {
         form: form,
         data: data,
         success: callback
-    });
+    })
 }
 
 

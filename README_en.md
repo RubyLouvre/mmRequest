@@ -13,7 +13,11 @@ Install with [bower](http://bower.io/):
 ```
 bower install mm-request
 ```
+or
 
+```
+npm install mmRequest --save
+```
 Starting
 ------------
 

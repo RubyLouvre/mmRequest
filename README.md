@@ -14,7 +14,11 @@ mmRequest 是 avalon 三柱臣之一（另外两个是 route 和 animation）。
 ```
 bower install mm-request
 ```
+从npm 安装
 
+```
+npm install mmRequest --save
+```
 开始
 ------------
 

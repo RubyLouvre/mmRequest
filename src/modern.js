@@ -11,6 +11,7 @@ function fail(onFail) {//添加出错回调
 }
 Promise.prototype.done = done
 Promise.prototype.fail = fail
+require('./getXHR/modern')
 
 var supportCors = require('./supportCors')
 var rjsonp = require('./rjsonp')
@@ -136,7 +137,7 @@ avalon.ajax = function (opts, promise) {
 
     promise.request()
     return promise
-};
+}
 "get,post".replace(avalon.rword, function (method) {
     avalon[method] = function (url, data, callback, type) {
         if (typeof data === "function") {
@@ -151,7 +152,7 @@ avalon.ajax = function (opts, promise) {
             success: callback,
             dataType: type
         })
-    };
+    }
 })
 function ok(val) {
     return val
@@ -167,9 +168,9 @@ avalon.getJSON = function (url, data, callback) {
 }
 avalon.upload = function (url, form, data, callback, dataType) {
     if (typeof data === "function") {
-        dataType = callback;
-        callback = data;
-        data = void 0;
+        dataType = callback
+        callback = data
+        data = void 0
     }
     return avalon.ajax({
         url: url,
@@ -178,16 +179,16 @@ avalon.upload = function (url, form, data, callback, dataType) {
         form: form,
         data: data,
         success: callback
-    });
+    })
 }
 
 
 /**
  * global event handler
  */
-avalon.ajaxGlobalEvents = {};
+avalon.ajaxGlobalEvents = {}
 
-["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
+;["start", "stop", "complete", "error", "success", "send"].forEach(function(method) {
     avalon.ajaxGlobalEvents[method] = avalon.noop
 })
 
@@ -195,8 +196,8 @@ avalon.ajaxGlobalEvents = {};
 
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function (searchString, position) {
-        position = position || 0;
-        return this.lastIndexOf(searchString, position) === position;
+        position = position || 0
+        return this.lastIndexOf(searchString, position) === position
     }
 }
 

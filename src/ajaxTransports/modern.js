@@ -12,9 +12,9 @@ var transports = avalon.ajaxTransports = {
     xhr: {
         //发送请求
         request: function() {
-            var self = this;
-            var opts = this.options;
-            var transport = this.transport = new avalon.xhr;
+            var self = this
+            var opts = this.options
+            var transport = this.transport = new avalon.xhr
             transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
             if (this.mimeType && transport.overrideMimeType) {
                 transport.overrideMimeType(this.mimeType)
@@ -48,8 +48,8 @@ var transports = avalon.ajaxTransports = {
 
             var dataType = opts.dataType
             if ("responseType" in transport && /^(blob|arraybuffer|text)$/.test(dataType)) {
-                transport.responseType = dataType;
-                this.useResponseType = true;
+                transport.responseType = dataType
+                this.useResponseType = true
             }
             //必须要支持 FormData 和 file.fileList 的浏览器 才能用 xhr 发送
             //标准规定的 multipart/form-data 发送必须用 utf-8 格式， 记得 ie 会受到 document.charset 的影响
@@ -66,11 +66,11 @@ var transports = avalon.ajaxTransports = {
         respond: function(event, forceAbort) {
             var transport = this.transport
             if (!transport) {
-                return;
+                return
             }
             // by zilong：避免abort后还继续派发onerror等事件
             if (forceAbort && this.timeoutID) {
-                clearTimeout(this.timeoutID);
+                clearTimeout(this.timeoutID)
                 delete this.timeoutID
             }
 
@@ -103,7 +103,7 @@ var transports = avalon.ajaxTransports = {
     },
     jsonp: {
         preproccess: function() {
-            var opts = this.options;
+            var opts = this.options
             var name = this.jsonpCallback = opts.jsonpCallback || "avalon.jsonp" + setTimeout("1")
             if (rjsonp.test(opts.url)) {
                 opts.url = opts.url.replace(rjsonp, "$1" + name)
@@ -126,7 +126,7 @@ var transports = avalon.ajaxTransports = {
     },
     script: {
         request: function() {
-            var opts = this.options;
+            var opts = this.options
             var node = this.transport = document.createElement("script")
             if (opts.charset) {
                 node.charset = opts.charset
@@ -145,16 +145,16 @@ var transports = avalon.ajaxTransports = {
             }
             // by zilong：避免abort后还继续派发onerror等事件
             if (forceAbort && this.timeoutID) {
-                clearTimeout(this.timeoutID);
+                clearTimeout(this.timeoutID)
                 delete this.timeoutID
             }
             node.onerror = node.onload = null
-            var parent = node.parentNode;
+            var parent = node.parentNode
             if (parent) {
                 parent.removeChild(node)
             }
             if (!forceAbort) {
-                var args;
+                var args
                 if (this.jsonpCallback) {
                     var jsonpCallback = this.jsonpCallback.startsWith('avalon.') ? avalon[this.jsonpCallback.replace(/avalon\./, '')] : window[this.jsonpCallback]
                     args = typeof jsonpCallback === "function" ? [500, "error"] : [200, "success"]
@@ -169,15 +169,15 @@ var transports = avalon.ajaxTransports = {
         preproccess: function() {
             var opts = this.options, formdata
             if (typeof opts.form.append === "function") { //简单判断opts.form是否为FormData
-                formdata = opts.form;
-                opts.contentType = '';
+                formdata = opts.form
+                opts.contentType = ''
             } else {
                 formdata = new FormData(opts.form)  //将二进制什么一下子打包到formdata
             }
             avalon.each(opts.data, function(key, val) {
                 formdata.append(key, val)  //添加客外数据
             })
-            this.formdata = formdata;
+            this.formdata = formdata
         }
     }
 }

@@ -4,6 +4,7 @@ var rjsonp = require('../rjsonp')
 var head = require('../head')
 var supportCors = require('../supportCors')
 var ie = require('../ie')
+
 var useOnload = ie === 0 || ie > 8
 var rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/
 
@@ -14,9 +15,9 @@ var transports = avalon.ajaxTransports = {
     xhr: {
         //发送请求
         request: function() {
-            var self = this;
-            var opts = this.options;
-            var transport = this.transport = new avalon.xhr;
+            var self = this
+            var opts = this.options
+            var transport = this.transport = new avalon.xhr
             transport.open(opts.type, opts.url, opts.async, opts.username, opts.password)
             if (this.mimeType && transport.overrideMimeType) {
                 transport.overrideMimeType(this.mimeType)
@@ -49,7 +50,7 @@ var transports = avalon.ajaxTransports = {
              */
             if (opts.progressCallback) {
                 // 判断是否 ie6-9
-                var isOldIE = document.all && !window.atob;
+                var isOldIE = document.all && !window.atob
                 if (!isOldIE) {
                     transport.upload.onprogress = opts.progressCallback
                 }
@@ -90,7 +91,7 @@ var transports = avalon.ajaxTransports = {
             }
             // by zilong：避免abort后还继续派发onerror等事件
             if (forceAbort && this.timeoutID) {
-                clearTimeout(this.timeoutID);
+                clearTimeout(this.timeoutID)
                 delete this.timeoutID
             }
             try {
@@ -152,7 +153,7 @@ var transports = avalon.ajaxTransports = {
     },
     jsonp: {
         preproccess: function() {
-            var opts = this.options;
+            var opts = this.options
             var name = this.jsonpCallback = opts.jsonpCallback || "avalon.jsonp" + setTimeout("1")
             if (rjsonp.test(opts.url)) {
                 opts.url = opts.url.replace(rjsonp, "$1" + name)
@@ -175,15 +176,15 @@ var transports = avalon.ajaxTransports = {
     },
     script: {
         request: function() {
-            var opts = this.options;
+            var opts = this.options
             var node = this.transport = document.createElement("script")
             if (opts.charset) {
                 node.charset = opts.charset
             }
-            var self = this;
+            var self = this
             node.onerror = node[useOnload ? "onload" : "onreadystatechange"] = function() {
                 self.respond()
-            };
+            }
             node.src = opts.url
             head.insertBefore(node, head.firstChild)
         },
@@ -194,18 +195,18 @@ var transports = avalon.ajaxTransports = {
             }
             // by zilong：避免abort后还继续派发onerror等事件
             if (forceAbort && this.timeoutID) {
-                clearTimeout(this.timeoutID);
+                clearTimeout(this.timeoutID)
                 delete this.timeoutID
             }
             var execute = /loaded|complete|undefined/i.test(node.readyState)
             if (forceAbort || execute) {
                 node.onerror = node.onload = node.onreadystatechange = null
-                var parent = node.parentNode;
+                var parent = node.parentNode
                 if (parent) {
                     parent.removeChild(node)
                 }
                 if (!forceAbort) {
-                    var args;
+                    var args
                     if (this.jsonpCallback) {
                         var jsonpCallback = this.jsonpCallback.startsWith('avalon.') ? avalon[this.jsonpCallback.replace(/avalon\./, '')] : window[this.jsonpCallback]
                         args = typeof jsonpCallback === "function" ? [500, "error"] : [200, "success"]
@@ -222,8 +223,8 @@ var transports = avalon.ajaxTransports = {
         preproccess: function() {
             var opts = this.options, formdata
             if (typeof opts.form.append === "function") { //简单判断opts.form是否为FormData
-                formdata = opts.form;
-                opts.contentType = '';
+                formdata = opts.form
+                opts.contentType = ''
             } else {
                 formdata = new FormData(opts.form)  //将二进制什么一下子打包到formdata
             }
@@ -250,45 +251,45 @@ if (!window.FormData) {
                  Next\r\n\
                  BinaryToArray = oDic.Items\r\n\
               End Function'
-    execScript(str, "VBScript");
+    execScript(str, "VBScript")
     avalon.fixAjax = function() {
         avalon.ajaxConverters.arraybuffer = function() {
             var body = this.tranport && this.tranport.responseBody
             if (body) {
-                return  new VBArray(BinaryToArray(body)).toArray();
+                return  new VBArray(BinaryToArray(body)).toArray()
             }
-        };
+        }
         function createIframe(ID) {
             var iframe = avalon.parseHTML("<iframe " + " id='" + ID + "'" +
-                    " name='" + ID + "'" + " style='position:absolute;left:-9999px;top:-9999px;'/>").firstChild;
-            return (document.body || document.documentElement).insertBefore(iframe, null);
+                    " name='" + ID + "'" + " style='position:absolute;left:-9999px;top:-9999px;'/>").firstChild
+            return (document.body || document.documentElement).insertBefore(iframe, null)
         }
         function addDataToForm(form, data) {
             var ret = [],
-                    d, isArray, vs, i, e;
+                    d, isArray, vs, i, e
             for (d in data) {
-                isArray = Array.isArray(data[d]);
-                vs = isArray ? data[d] : [data[d]];
+                isArray = Array.isArray(data[d])
+                vs = isArray ? data[d] : [data[d]]
                 // 数组和原生一样对待，创建多个同名输入域
                 for (i = 0; i < vs.length; i++) {
-                    e = document.createElement("input");
-                    e.type = 'hidden';
-                    e.name = d;
-                    e.value = vs[i];
-                    form.appendChild(e);
-                    ret.push(e);
+                    e = document.createElement("input")
+                    e.type = 'hidden'
+                    e.name = d
+                    e.value = vs[i]
+                    form.appendChild(e)
+                    ret.push(e)
                 }
             }
-            return ret;
+            return ret
         }
         //https://github.com/codenothing/Pure-Javascript-Upload/blob/master/src/upload.js
         avalon.ajaxTransports.upload = {
             request: function() {
-                var self = this;
-                var opts = this.options;
-                var ID = "iframe-upload-" + this.uniqueID;
-                var form = opts.form;
-                var iframe = this.transport = createIframe(ID);
+                var self = this
+                var opts = this.options
+                var ID = "iframe-upload-" + this.uniqueID
+                var form = opts.form
+                var iframe = this.transport = createIframe(ID)
                 //form.enctype的值
                 //1:application/x-www-form-urlencoded   在发送前编码所有字符（默认）
                 //2:multipart/form-data 不对字符编码。在使用包含文件上传控件的表单时，必须使用该值。
@@ -298,54 +299,54 @@ if (!window.FormData) {
                     action: form.action || "",
                     enctype: form.enctype,
                     method: form.method
-                };
-                var fields = opts.data ? addDataToForm(form, opts.data) : [];
+                }
+                var fields = opts.data ? addDataToForm(form, opts.data) : []
                 //必须指定method与enctype，要不在FF报错
                 //表单包含文件域时，如果缺少 method=POST 以及 enctype=multipart/form-data，
                 // 设置target到隐藏iframe，避免整页刷新
-                form.target = ID;
-                form.action = opts.url;
-                form.method = "POST";
-                form.enctype = "multipart/form-data";
+                form.target = ID
+                form.action = opts.url
+                form.method = "POST"
+                form.enctype = "multipart/form-data"
                 this.uploadcallback = avalon.bind(iframe, "load", function(event) {
-                    self.respond(event);
-                });
-                form.submit();
+                    self.respond(event)
+                })
+                form.submit()
                 //还原form的属性
                 for (var i in backups) {
-                    form[i] = backups[i];
+                    form[i] = backups[i]
                 }
                 //移除之前动态添加的节点
                 fields.forEach(function(input) {
-                    form.removeChild(input);
-                });
+                    form.removeChild(input)
+                })
             },
             respond: function(event) {
                 var node = this.transport, child
                 // 防止重复调用,成功后 abort
                 if (!node) {
-                    return;
+                    return
                 }
                 if (event && event.type === "load") {
-                    var doc = node.contentWindow.document;
-                    this.responseXML = doc;
+                    var doc = node.contentWindow.document
+                    this.responseXML = doc
                     if (doc.body) {//如果存在body属性,说明不是返回XML
-                        this.responseText = doc.body.innerHTML;
+                        this.responseText = doc.body.innerHTML
                         //当MIME为'application/javascript' 'text/javascript",浏览器会把内容放到一个PRE标签中
                         if ((child = doc.body.firstChild) && child.nodeName.toUpperCase() === 'PRE' && child.firstChild) {
-                            this.responseText = child.firstChild.nodeValue;
+                            this.responseText = child.firstChild.nodeValue
                         }
                     }
-                    this.dispatch(200, "success");
+                    this.dispatch(200, "success")
                 }
-                this.uploadcallback = avalon.unbind(node, "load", this.uploadcallback);
-                delete this.uploadcallback;
+                this.uploadcallback = avalon.unbind(node, "load", this.uploadcallback)
+                delete this.uploadcallback
                 setTimeout(function() {  // Fix busy state in FF3
-                    node.parentNode.removeChild(node);
-                });
+                    node.parentNode.removeChild(node)
+                })
             }
-        };
-        delete avalon.fixAjax;
-    };
+        }
+        delete avalon.fixAjax
+    }
     avalon.fixAjax()
 }
