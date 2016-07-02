@@ -1,5 +1,5 @@
 /*!
- * built in 2016-7-3:1 version 0.40 by 司徒正美
+ * built in 2016-7-3:1 version 0.41 by 司徒正美
  * 2011.8.31
  *      将会传送器的abort方法上传到avalon.XHR.abort去处理
  *      修复serializeArray的bug
