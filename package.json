@@ -2,7 +2,7 @@
   "name": "mmRequest",
   "version": "0.4.1",
   "description": "The HTTP client for avalon.js",
-  "main": "index.js",
+  "main": "dist/mmRequest.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
