@@ -1,5 +1,5 @@
 /*!
- * built in 2016-7-3:1 version 0.41 by 司徒正美
+ * built in 2016-7-9:22 version 0.42 by 司徒正美
  * 2011.8.31
  *      将会传送器的abort方法上传到avalon.XHR.abort去处理
  *      修复serializeArray的bug
@@ -748,7 +748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var isLocal = false
 	var rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/
-	var msie = __webpack_require__(7)
+	var ie = __webpack_require__(7)
 	try {
 	    //在IE下如果重置了document.domain，直接访问window.location会抛错，但用document.URL就ok了
 	    //http://www.cnblogs.com/WuQiang/archive/2012/09/21/2697474.html
