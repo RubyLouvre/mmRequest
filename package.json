@@ -1,6 +1,6 @@
 {
   "name": "mmRequest",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "The HTTP client for avalon.js",
   "main": "dist/mmRequest.js",
   "scripts": {
