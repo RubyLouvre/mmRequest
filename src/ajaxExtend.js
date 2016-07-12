@@ -49,3 +49,5 @@ function ajaxExtend(opts) {
     }
     return opts
 }
+
+module.exports = ajaxExtend

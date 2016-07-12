@@ -1,5 +1,5 @@
 /*!
- * built in 2016-7-9:22 version 0.43 by 司徒正美
+ * built in 2016-7-13:1 version 0.43 by 司徒正美
  * 2011.8.31
  *      将会传送器的abort方法上传到avalon.XHR.abort去处理
  *      修复serializeArray的bug
@@ -330,6 +330,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return opts
 	}
+
+	module.exports = ajaxExtend
 
 /***/ },
 /* 2 */
