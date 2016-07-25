@@ -116,13 +116,13 @@ var XHRMethods = {
         /**
          * global event handler
          */
-        ajaxActive --
+        avalon.ajax.activeIndex --
         
         window.setTimeout(function() {
             avalon.ajaxGlobalEvents.complete(that, that.options)
         }, 0)
         
-        if (ajaxActive === 0) {
+        if (avalon.ajax.activeIndex === 0) {
             // 最后一个
             window.setTimeout(function() {
                 avalon.ajaxGlobalEvents.stop()

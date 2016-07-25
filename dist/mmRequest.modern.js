@@ -1,5 +1,5 @@
 /*!
- * built in 2016-7-13:1 version 0.44 by 司徒正美
+ * built in 2016-7-25:11 version 0.44 by 司徒正美
  * 2011.8.31
  *      将会传送器的abort方法上传到avalon.XHR.abort去处理
  *      修复serializeArray的bug
@@ -97,8 +97,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * global event handler
 	 */
-	// 记录当前活跃的 ajax 数
-	var ajaxActive = 0
 
 	//ajax主函数
 	avalon.ajax = function (opts, promise) {
@@ -197,18 +195,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * global event handler
 	     */
-	    if (ajaxActive === 0) {
+	    if (avalon.ajax.activeIndex === 0) {
 	        // 第一个
 	        avalon.ajaxGlobalEvents.start()
 	    }
 	    avalon.ajaxGlobalEvents.send(promise, opts)
-	    ajaxActive ++
+	    avalon.ajax.activeIndex ++
 
 
 
 	    promise.request()
 	    return promise
 	}
+	// 记录当前活跃的 ajax 数
+
+	avalon.ajax.activeIndex = 0
+
 	"get,post".replace(avalon.rword, function (method) {
 	    avalon[method] = function (url, data, callback, type) {
 	        if (typeof data === "function") {
@@ -465,13 +467,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * global event handler
 	         */
-	        ajaxActive --
+	        avalon.ajax.activeIndex --
 	        
 	        window.setTimeout(function() {
 	            avalon.ajaxGlobalEvents.complete(that, that.options)
 	        }, 0)
 	        
-	        if (ajaxActive === 0) {
+	        if (avalon.ajax.activeIndex === 0) {
 	            // 最后一个
 	            window.setTimeout(function() {
 	                avalon.ajaxGlobalEvents.stop()
