@@ -9,19 +9,37 @@
         <script>
             avalon.define({
                 $id: 'test',
-                name: '司徒正美'
+                name: '司徒正美',
+                aaa: '',
+                bbb: ''
             })
-            avalon.get('/getAjax',{aa:1,bb:2}, function(a){
+            avalon.get('/getAjax', {aa: 1, bb: 2}, function (a) {
                 console.log(a)
             })
-             avalon.post('/postAjax',{post:'dddd'}, function(a){
+            var formData = new FormData
+            formData.append('aaa','bbb')
+             avalon.upload('/upload', formData, function(a){
+                 console.log("ok",a )
+             })
+            avalon.get('/jsonp', {a: 1, b: 2, c: 3}, function (a) {
+                console.log(a)
+            }, 'jsonp')
+            avalon.post('/postAjax', {post: 'dddd'}, function (a) {
                 console.log(a)
             })
+
+
         </script>
     </head>
     <body>
         <div ms-controller="test">
             {{@name}}
+            <form action="/form.html" type="GET">
+                <input name="aaa" ms-duplex="@aaa"/>
+                <input name="password" ms-duplex="@bbb" type="password"/>
+                <p><input type="submit" value="submit" /></p>
+            </form>
         </div>
+
     </body>
 </html>
