@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="avalon.js"></script>
+        <script src="mmRequest.js"></script>
+        <script>
+            avalon.define({
+                $id: 'test',
+                name: '司徒正美'
+            })
+            avalon.get('/getAjax',{aa:1,bb:2}, function(a){
+                console.log(a)
+            })
+             avalon.post('/postAjax',{post:'dddd'}, function(a){
+                console.log(a)
+            })
+        </script>
+    </head>
+    <body>
+        <div ms-controller="test">
+            {{@name}}
+        </div>
+    </body>
+</html>
